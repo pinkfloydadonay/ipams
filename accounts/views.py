@@ -80,6 +80,7 @@ def login_user(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
+                messages.success(request, f'Welcome {username}')
                 if request.POST.get('next'):
                     return redirect(request.POST.get('next'))
             else:
@@ -89,6 +90,7 @@ def login_user(request):
 
 def logout(request):
     auth_logout(request)
+    messages.success(request, 'You are now logged out from the system...')
     return redirect('/')
 
 

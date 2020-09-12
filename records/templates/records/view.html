@@ -136,6 +136,7 @@
         </div>
     </div>
     <div class="row" style="margin-bottom:10px;">
+        {% if is_owner %}
         <div class="col-6">
             <table class="table table-striped">
                 <tr>
@@ -156,7 +157,8 @@
                 </tr>
             </table>
         </div>
-        {% if not role_checked %}
+        {% endif %}
+        {% if not role_checked and user.role.pk > 2 %}
         <div class="col-6 d-flex justify-content-end">
             <a type="button" href="#" id="btn-approve">Approve</a> |
             <a type="button" href="#" id="btn-decline">Decline</a> 
@@ -169,7 +171,7 @@
         {% include 'records/record_navbar.html' %}
         <div class="tab-content main-container" id="nav-tabContent">
 
-           <!--------------------------------------TITLE AND ABSTRACT---------------------------------------------------->
+           <!------------------------------------TITLE AND ABSTRACT---------------------------------------------------->
 
             <a class="nav-item nav-link nav-main title-and-abstract active col-12 d-lg-none nav-copy" data-toggle="tab" href="#" id="nav-item-c1" onclick="classificationClick('1', true)">Title and Abstract</a>
             <div class="tab-pane fade show active" id="nav-title-and-abstract" role="tabpanel" style="background-color:white">

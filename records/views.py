@@ -81,8 +81,9 @@ class Home(View):
                         del_account.delete()
                         success = True
                 return JsonResponse({'success': success})
-            # filtering records from an ajax request
-            elif request.POST.get('is_filtered') == 'True':
+            # filtering records
+            elif request.POST.get('is_filtered') == 'true':
+                print(request.POST)
                 year_from_filter = request.POST.get('year_from', '0')
                 year_to_filter = request.POST.get('year_to', '0')
                 classification_filter = request.POST.get('classification')
@@ -121,30 +122,6 @@ class Home(View):
                     record.psced_classification.name
                 ])
             return JsonResponse({"data": data})
-        else:
-            # if filter save button is clicked
-            if request.POST.get('is_filtered') == 'true':
-                # code if checkbox for year accomplished is clicked
-                filters = {'is_filtered': False}
-                if request.POST.get('year_cb', 'off') == 'on':
-                    filters['year_from'] = request.POST.get('year_from')
-                    filters['year_to'] = request.POST.get('year_to')
-                    filters['is_filtered'] = True
-                if request.POST.get('classification') != '':
-                    filters['classification'] = request.POST.get('classification')
-                    filters['is_filtered'] = True
-                if request.POST.get('psced_classification') != '':
-                    filters['psced_classification'] = request.POST.get('psced_classification')
-                    filters['is_filtered'] = True
-                if request.POST.get('publication_cb', 'off') == 'on':
-                    filters['publication'] = request.POST.get('publication')
-                    filters['is_filtered'] = True
-                context = {
-                    'records': Record.objects.all(),
-                    'record_form': forms.RecordForm(),
-                    'filters': filters,
-                }
-                return render(request, self.name, context)
 
 
 class ViewRecord(View):
@@ -175,6 +152,7 @@ class ViewRecord(View):
         ktto_checked = {'status':'pending'}
         rdco_checked = {'status':'pending'}
         role_checked = False
+        is_owner = False
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
                 adviser_checked = checked_record
@@ -184,11 +162,14 @@ class ViewRecord(View):
                 rdco_checked = checked_record
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
+        if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
+            is_owner = True
         self.context['adviser_checked'] = adviser_checked
         self.context['ktto_checked'] = ktto_checked
         self.context['rdco_checked'] = rdco_checked
         self.context['role_checked'] = role_checked
         self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_owner'] = is_owner
         return render(request, self.name, self.context)
 
     def post(self, request, record_id):
@@ -439,16 +420,23 @@ class MyRecordsView(View):
         user_records = UserRecord.objects.filter(user=request.user)
         data = []
         for user_record in user_records:
-            adviser_checked = 'pending'
-            ktto_checked = 'pending'
-            rdco_checked = 'pending'
+            adviser_checked = f'<div class="badge badge-secondary">pending</div>'
+            ktto_checked = f'<div class="badge badge-secondary">pending</div>'
+            rdco_checked = f'<div class="badge badge-secondary">pending</div>'
             for checked_record in CheckedRecord.objects.filter(record=user_record.record):
+                if checked_record.status == 'approved':
+                    badge = 'success'
+                elif checked_record.status == 'declined':
+                    badge = 'danger'
+                else:
+                    badge = 'secondary'
+                record_status = f'<div class="badge badge-{badge}">{checked_record.status}</div>'
                 if checked_record.checked_by.role.pk == 3:
-                    adviser_checked = checked_record.status
+                    adviser_checked = record_status
                 elif checked_record.checked_by.role.pk == 4:
-                    ktto_checked = checked_record.status
+                    ktto_checked = record_status
                 elif checked_record.checked_by.role.pk == 5:
-                    rdco_checked = checked_record.status
+                    rdco_checked = record_status
             data.append([
                 user_record.record.pk,
                 '<a href="/record/' + str(
@@ -456,7 +444,6 @@ class MyRecordsView(View):
                 adviser_checked,
                 ktto_checked,
                 rdco_checked,
-                '<a href="#">resubmit</a> | <a href="#">remove</a>',
             ])
         return JsonResponse({"data": data})
 

@@ -12,53 +12,48 @@
 //-----------------------initializing datatables---------------------------------------------
 		var recordsTbl;
 		var accountsTbl;
-		var filters = {
-			"is_filtered": "{{ filters.is_filtered }}",
-			"year_from": "{{ filters.year_from }}",
-			"year_to": "{{ filters.year_to }}",
-			"classification": "{{ filters.classification }}",
-			"psced_classification": "{{ filters.psced_classification }}",
-			"publication": "{{ filters.publication }}"
-		}
-		$(document).ready(function() {
-		    recordsTbl = $('#tbl-records').DataTable({
-		    	"ajax":	{
-		    		"headers": { "X-CSRFToken": '{{ csrf_token }}' },
-		    		"url": "{% url 'records-index' %}",
-		    		"data": filters,
-		    		"type": "post",
-		    	},
-		    	"scrollX": true,
-		    	"responsive": true,
-		    	"order": [[ 3, "desc" ], [ 2, "asc" ]],
+		var filters = {};
 
-        		    {% if user.is_authenticated and user.role.id > 3 %}
+		function initRecordsTbl(){
+			recordsTbl = $('#tbl-records').DataTable({
+				"ajax":	{
+					headers: { "X-CSRFToken": '{{ csrf_token }}' },
+					url: "{% url 'records-index' %}",
+					data: filters, 
+					dataType:"json",
+					type: "post",
+				},
+				"scrollX": true,
+				"responsive": true,
+				"order": [[ 3, "desc" ], [ 2, "asc" ]],
+
+				{% if user.is_authenticated and user.role.id > 3 %}
 				"select": {
-        		    style: 'multi',
-        		    selector: 'td:first-child'
-        		},
+					style: 'multi',
+					selector: 'td:first-child'
+				},
 
-        		    {% endif %}
-        		"columnDefs": [
-        		    {
-        		        "targets": [ 1 ],
-        		        "visible": false,
-        		        "searchable": false
-        		    },
-        		    {
-        		    	"targets": [0],
-        		    	"orderable": false,
-        		    	"width": 20,
-        		    	"className": 'select-checkbox',
-        		    	"targets": 0,
-        		    	"visible": {% if not user.is_authenticated or user.role.id < 4 %} false {% else %} true {% endif %}
-        		    },
-        		],
-		    });
-		    $("#id_classification").val("{{ filters.classification }}");
-		    $("#id_psced_classification").val("{{ filters.psced_classification }}");
+				{% endif %}
+				"columnDefs": [
+					{
+						"targets": [ 1 ],
+						"visible": false,
+						"searchable": false
+					},
+					{
+						"targets": [0],
+						"orderable": false,
+						"width": 20,
+						"className": 'select-checkbox',
+						"targets": 0,
+						"visible": {% if not user.is_authenticated or user.role.id < 4 %} false {% else %} true {% endif %}
+					},
+				],
+			});
+		}
 
-{% if user.role.id > 2 %}
+		function initAccountsTbl(){
+			{% if user.role.id > 2 %}
 		    accountsTbl= $('#tbl-accounts').DataTable({
 		    	"ajax":	{
 		    		"headers": { "X-CSRFToken": '{{ csrf_token }}' },
@@ -87,8 +82,35 @@
         		    }
         		],
 		    });
-{% endif %}
-		} );
+			{% endif %}
+		}
+
+		initRecordsTbl();
+		initAccountsTbl();
+
+//------------------------on filter save-----------------------------------------------------
+		$("#btn-filter-save").on("click", function(){
+			filters = {
+				"year_from":"",
+				"year_to":"",
+				"classification":"",
+				"psced_classification":"",
+				"publication":"",
+				"is_filtered":"",
+			}
+			if($("#year_cb").is(":checked")){
+				filters['year_from'] = $("#year_from").val();
+				filters['year_to']= $("#year_to").val();
+			}
+			filters['classification']=$("#id_classification").val();
+			filters['psced_classification']=$("#id_psced_classification").val();
+			if($("#publication_cb").is(":checked")){
+				filters['publication']=$("#publication").val();
+			}
+			filters['is_filtered']=true;
+			recordsTbl.clear().destroy();
+			initRecordsTbl();
+		});
 
 //------------------------importing spreadsheet----------------------------------------------
 		$("#btn-import").on("click", function(){
@@ -617,7 +639,7 @@ section with the new entry.</li>
 	<div class="modal fade" id="filter-modal" tabindex="-1" role="dialog" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
-			<form method="post">
+			<form method="post" id="form-filter">
 				{% csrf_token %}
 	    	  <div class="modal-header base-bg-primary">
 	    	    <h5 class="modal-title">Filter</h5>
@@ -637,10 +659,10 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-3">
-							<input class="form-control" placeholder="from" name="year_from" value="{{ filters.year_from }}">
+							<input class="form-control" placeholder="from" id="year_from" name="year_from" value="{{ filters.year_from }}">
 						</div>
 						<div class="col-lg-3">
-							<input class="form-control" placeholder="to" name="year_to" value="{{ filters.year_to }}">
+							<input class="form-control" placeholder="to" id="year_to" name="year_to" value="{{ filters.year_to }}">
 						</div>
 					</div>
 					<div class="row">
@@ -689,7 +711,7 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-7">
-							<input class="form-control" name="publication" value="{{ filters.publication }}">
+							<input class="form-control" id="publication" name="publication" value="{{ filters.publication }}">
 						</div>
 					</div>
 					<div class="row" style="margin-top:10px">
@@ -724,9 +746,8 @@ section with the new entry.</li>
 				</div>
 	    	  </div>
 	    	  <div class="modal-footer">
-				  <input type="hidden" value="true" name="is_filtered"/>
 	    	    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	    	    <button type="submit" id="btn-filter-save" class="btn btn-primary">Apply</button>
+	    	    <button type="button" id="btn-filter-save" data-dismiss="modal" class="btn btn-primary">Apply</button>
 	    	  </div>
 				</form>
 	    	</div>

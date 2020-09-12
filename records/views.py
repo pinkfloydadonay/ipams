@@ -56,7 +56,7 @@ class Home(View):
                 for record_per_year in records_per_year:
                     records_per_year_count.append({'year': record_per_year['year_accomplished'], 'count': record_per_year['year_count']})
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT year_accomplished, COUNT(year_accomplished) AS year_count FROM (SELECT DISTINCT year_accomplished, psced_classification_id FROM records_record) as tbl GROUP BY year_accomplished")
+                    cursor.execute("SELECT year_accomplished, COUNT(year_accomplished) AS year_count FROM (SELECT DISTINCT year_accomplished, psced_classification_id FROM (select year_accomplished, psced_classification_id from records_record inner join records_checkedrecord on records_record.id=record_id inner join accounts_user on records_checkedrecord.checked_by_id=accounts_user.id where accounts_user.role_id=5 and records_checkedrecord.status='approved') as recordtbl) as tbl GROUP BY year_accomplished")
                     rows = cursor.fetchall()
                     for row in rows:
                         psced_per_year_count.append({'year': row[0], 'psced_count': row[1]})

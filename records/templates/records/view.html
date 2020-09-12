@@ -158,13 +158,15 @@
             </table>
         </div>
         {% endif %}
-        {% if not role_checked and user.role.pk > 2 %}
         <div class="col-6 d-flex justify-content-end">
+        {% if not role_checked and user.role.pk > 2 %}
             <a type="button" href="#" id="btn-approve">Approve</a> |
             <a type="button" href="#" id="btn-decline">Decline</a> 
-            <button type="button" id="btn-remove">remove</button>
-        </div>
         {% endif %}
+        {% if is_removable %}
+            <button type="button" id="btn-remove">remove</button>
+        {% endif %}
+        </div>
     </div>
     <form method="post" action="{% url 'records-add' %}" id="form-record">
         {% csrf_token %}

@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, JsonResponse
 
-from accounts.decorators import authorized_roles
+from accounts.decorators import authorized_roles, authorized_record_user
 from accounts.models import User, UserRole, UserRecord
 from .forms import AssessmentForm, CheckedRecordForm
 from .models import Record, AuthorRole, Classification, PSCEDClassification, ConferenceLevel, BudgetType, \
@@ -43,15 +43,15 @@ class Home(View):
             records = Record.objects.filter(pk__in=Subquery(checked_records.values('record_id')))
             # graphs
             if request.POST.get('graphs'):
-                basic_count = Record.objects.filter(classification=1).count()
-                applied_count = Record.objects.filter(classification=2).count()
+                basic_count = records.filter(classification=1).count()
+                applied_count = records.filter(classification=2).count()
                 psced_count = []
                 records_per_year_count = []
                 psced_per_year_count = []
                 psced_classifications = PSCEDClassification.objects.all()
-                records_per_year = Record.objects.values('year_accomplished').annotate(year_count=Count('year_accomplished')).order_by('year_accomplished')[:10]
+                records_per_year = records.values('year_accomplished').annotate(year_count=Count('year_accomplished')).order_by('year_accomplished')[:10]
                 for psced in psced_classifications:
-                    psced_count.append({'name': psced.name, 'count': Record.objects.filter(
+                    psced_count.append({'name': psced.name, 'count': records.filter(
                         psced_classification=PSCEDClassification.objects.get(pk=psced.id)).count()})
                 for record_per_year in records_per_year:
                     records_per_year_count.append({'year': record_per_year['year_accomplished'], 'count': record_per_year['year_count']})
@@ -146,6 +146,7 @@ class ViewRecord(View):
     }
 
     @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_record_user())
     def get(self, request, record_id):
         checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
         adviser_checked = {'status':'pending'}
@@ -153,6 +154,7 @@ class ViewRecord(View):
         rdco_checked = {'status':'pending'}
         role_checked = False
         is_owner = False
+        is_removable = False
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
                 adviser_checked = checked_record
@@ -162,6 +164,8 @@ class ViewRecord(View):
                 rdco_checked = checked_record
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
+            if checked_record.status == 'declined':
+                is_removable = True
         if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
             is_owner = True
         self.context['adviser_checked'] = adviser_checked
@@ -170,6 +174,7 @@ class ViewRecord(View):
         self.context['role_checked'] = role_checked
         self.context['record'] = Record.objects.get(pk=record_id)
         self.context['is_owner'] = is_owner
+        self.context['is_removable'] = is_removable
         return render(request, self.name, self.context)
 
     def post(self, request, record_id):
@@ -180,6 +185,7 @@ class ViewRecord(View):
             del_record.delete()
             return JsonResponse({'success': True})
         else:
+            # approving or declining record
             if request.user.role.id > 2:
                 checked_record_form = CheckedRecordForm(request.POST)
                 if checked_record_form.is_valid():
@@ -190,8 +196,7 @@ class ViewRecord(View):
                     checked_record.save()
                 else:
                     print('invalid form')
-                self.context['record'] = Record.objects.get(pk=record_id)
-                return render(request, self.name, self.context)
+                return redirect('records-view', record_id)
 
 
 class Add(View):

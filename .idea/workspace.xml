@@ -20,10 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/ipams.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ipams.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,11 +50,12 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/records/templates/records/profile" />
     <property name="settings.editor.selected.configurable" value="restructured.text.topic" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/records/templates/records/profile" />
       <recent name="D:\Neil\ipams\records\templates\records\profile" />
       <recent name="D:\Neil\ipams\staticfiles" />
     </key>
@@ -92,10 +92,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="404" y="221" width="547" height="357" key="#Notifications" timestamp="1599917454810">
+    <state x="404" y="221" width="547" height="357" key="#Notifications" timestamp="1599929132013">
       <screen x="0" y="24" width="1366" height="744" />
     </state>
-    <state x="404" y="221" width="547" height="357" key="#Notifications/0.24.1366.744@0.24.1366.744" timestamp="1599917454810" />
+    <state x="404" y="221" width="547" height="357" key="#Notifications/0.24.1366.744@0.24.1366.744" timestamp="1599929132013" />
     <state x="117" y="54" width="424" height="491" key="FileChooserDialogImpl" timestamp="1599915330694">
       <screen x="0" y="24" width="1366" height="744" />
     </state>

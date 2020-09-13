@@ -2,67 +2,6 @@
 {% load crispy_forms_tags %}
 {% block footer %}
 <script>
-		var authorCount = 1;
-		var conferenceCount = 1;
-		var budgetCount = 1;
-		var collaborationCount = 1;
-
-		function removeAuthor(id=0){
-			authorCount--;
-			$("#author-"+id).remove();
-		}
-
-		function removeConference(id=0){
-			conferenceCount--;
-			$("#conference-"+id).remove();
-		}
-
-		function removeBudget(id=0){
-			budgetCount--;
-			$("#budget-"+id).remove();
-		}
-
-		function removeCollaboration(id=0){
-			collaborationCount--;
-			$("#collaboration-"+id).remove();
-		}
-
-		$("#add-author-btn").on("click",function(){
-			authorCount++;
-			$("#author-rows").append('<div class="row" id="author-'+authorCount+'"><div class="col-7"><input name="author_names[]" placeholder="Name" class="form-control" type="text"></div><div class="col-3"><select name="author_roles[]" class="form-control"> {% for author_role in author_roles %}<option value="{{ author_role.pk }}">{{ author_role.name }}</option> {% endfor %} </select></div><div class="col-2"><button class="btn btn-danger" type="button" onclick="removeAuthor('+authorCount+')">REMOVE</button></div></div>');
-		});
-
-		$("#add-conference-btn").on("click",function(){
-			conferenceCount++;
-			$("#conference-rows").append('<div class="row" id="conference-'+conferenceCount+'"><div class="col-2"><select name="conference_levels[]" class="form-control"> {% for conference_level in conference_levels %} <option value="{{ conference_level.pk }}">{{ conference_level.name }}</option> {% endfor %} </select></div><div class="col-3"><input type="text" placeholder="Title" name="conference_titles[]" class="form-control"></div><div class="col-2"><input type="date" name="conference_dates[]" class="form-control"></div><div class="col-3"><input type="text" placeholder="Venue" name="conference_venues[]" class="form-control"></div><div class="col-2"><button class="btn btn-danger" type="button" onclick="removeConference('+conferenceCount+')">REMOVE</button></div></div>');
-		});
-
-		$("#add-budget-btn").on("click",function(){
-			budgetCount++;
-			$("#budget-rows").append('<div class="row" id="budget-'+budgetCount+'"><div class="col-2"><select name="budget_types[]" class="form-control"> {% for budget_type in budget_types %} <option value="{{ budget_type.pk }}">{{ budget_type.name }}</option> {% endfor %} </select></div><div class="col-4"><input type="number" name="budget_allocations[]" placeholder="Budget Allocation" class="form-control"></div><div class="col-4"><input type="text" name="funding_sources[]" placeholder="Funding Source" class="form-control"></div><div class="col-2"><button class="btn btn-danger" type="button" onclick="removeBudget('+budgetCount+')">REMOVE</button></div></div>');
-		});
-
-		$("#add-collaboration-btn").on("click",function(){
-			collaborationCount++;
-			$("#collaboration-rows").append('<div class="row" id="collaboration-'+collaborationCount+'"><div class="col-4"><input type="text" name="industries[]" class="form-control" placeholder="Other Industry"></div><div class="col-4"><input type="text" name="institutions[]" class="form-control" placeholder="Institution"></div><div class="col-2"><select name="collaboration_types[]" class="form-control"> {% for collaboration_type in collaboration_types %} <option value="{{ collaboration_type.pk }}">{{ collaboration_type.name }}</option> {% endfor %} </select></div><div class="col-2"><button class="btn btn-danger" type="button" onclick="removeCollaboration('+collaborationCount+')">REMOVE</button></div></div>');
-		});
-
-        function classificationClick(id, copy=false){
-            if(copy){
-                $("#nav-item-"+id).click();
-                $("#nav-item-c"+id).addClass("active");
-            }
-            else{
-                $(".nav-copy").removeClass("active").removeClass("show");
-                $(".tab-pane").removeClass("active").removeClass("show");
-                $(".nav-item").removeClass("active");
-
-                $("#nav-item-"+id).addClass("active");
-                $("#nav-item-c"+id).addClass("active");
-                $("#nav-item-c"+id).next().addClass("active").addClass("show").addClass(" animate__animated animate__fadeIn animate__faster");
-            }
-        }
-
         $(document).ready(function(){
             $("#btn-approve").on("click", function(){
                 $("#modal-title").html("Approve");
@@ -103,8 +42,23 @@
                   }
                 })
             });
-
         });
+
+        function classificationClick(id, copy=false){
+            if(copy){
+                $("#nav-item-"+id).click();
+                $("#nav-item-c"+id).addClass("active");
+            }
+            else{
+                $(".nav-copy").removeClass("active").removeClass("show");
+                $(".tab-pane").removeClass("active").removeClass("show");
+                $(".nav-item").removeClass("active");
+
+                $("#nav-item-"+id).addClass("active");
+                $("#nav-item-c"+id).addClass("active");
+                $("#nav-item-c"+id).next().addClass("active").addClass("show").addClass(" animate__animated animate__fadeIn animate__faster");
+            }
+        }
 
         function checkStatusClick(role){
             if(role == 'adviser'){
@@ -122,7 +76,7 @@
                 $("#checked-status-date").val("{{ rdco_checked.date_created }}");
                 $("#checked-status-comment").html("{{ rdco_checked.comment }}");
             }
-
+            
             $("#checked-status-modal").modal("show");
         }
 	</script>
@@ -132,11 +86,35 @@
 <div class="container">
     <div class="row">
         <div class="col-12" style="margin-top:30px; margin-bottom:30px">
-            <a href="{% url 'records-index' %}">Home</a> / {{ record.title }}
+            <a href="{% url 'records-index' %}">Home</a> / <a href="{% url 'records-pending' %}">Pending records</a> / {{ record.title }}
         </div>
     </div>
     <div class="row" style="margin-bottom:10px;">
+        <div class="col-6">
+            <table class="table table-striped">
+                <tr>
+                    <th>Checked By</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Adviser</td>
+                    <td><a href="#" onclick="checkStatusClick('adviser');">{{ adviser_checked.status }}</a></td>
+                </tr>
+                <tr>
+                    <td>KTTO</td>
+                    <td><a href="#" onclick="checkStatusClick('ktto');">{{ ktto_checked.status }}</a></td>
+                </tr>
+                <tr>
+                    <td>RDCO</td>
+                    <td><a href="#" onclick="checkStatusClick('rdco');">{{ rdco_checked.status }}</a></td>
+                </tr>
+            </table>
+        </div>
         <div class="col-6 d-flex justify-content-end">
+        {% if not role_checked and user.role.pk > 2 %}
+            <a type="button" href="#" id="btn-approve">Approve</a> |
+            <a type="button" href="#" id="btn-decline">Decline</a> 
+        {% endif %}
         {% if is_removable %}
             <button type="button" id="btn-remove">remove</button>
         {% endif %}
@@ -212,4 +190,71 @@
     </form>
 </div>
 
+
+<!-- --------------------------------Modal--------------------------------------------- -->
+<div class="modal fade" id="assessment-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header base-bg-primary">
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                {{ checked_record_form.comment|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="status" name="status">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="btn-assessment-save" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="checked-status-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header base-bg-primary">
+                <h5 class="modal-title" id="checked-status-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="checked-status-date">Date Checked: </label><input id="checked-status-date" type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="checked-status-comment">Comment:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <textarea id="checked-status-comment" class="form-control" rows="6" readonly>
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

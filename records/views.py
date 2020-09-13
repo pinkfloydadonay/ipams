@@ -149,12 +149,48 @@ class ViewRecord(View):
     @method_decorator(authorized_record_user())
     def get(self, request, record_id):
         checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
-        adviser_checked = {'status':'pending'}
-        ktto_checked = {'status':'pending'}
-        rdco_checked = {'status':'pending'}
+        is_removable = False
+        for checked_record in checked_records:
+            if checked_record.status == 'declined':
+                is_removable = True
+        self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_removable'] = is_removable
+        return render(request, self.name, self.context)
+
+
+class PendingRecordView(View):
+    name = 'records/profile/view_pending.html'
+    author_roles = AuthorRole.objects.all()
+    classifications = Classification.objects.all()
+    psced_classifications = PSCEDClassification.objects.all().order_by('name')
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    publication_levels = PublicationLevel.objects.all()
+    checked_record_form = CheckedRecordForm()
+    context = {
+        'author_roles': author_roles,
+        'classifications': classifications,
+        'psced_classifications': psced_classifications,
+        'conference_levels': conference_levels,
+        'budget_types': budget_types,
+        'collaboration_types': collaboration_types,
+        'publication_levels': publication_levels,
+        'checked_record_form': checked_record_form,
+    }
+
+    @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_record_user())
+    def get(self, request, record_id):
+        checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
+        adviser_checked = {'status': 'pending'}
+        ktto_checked = {'status': 'pending'}
+        rdco_checked = {'status': 'pending'}
         role_checked = False
         is_owner = False
         is_removable = False
+        if request.user.role.pk > 3:
+            is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
                 adviser_checked = checked_record
@@ -174,6 +210,231 @@ class ViewRecord(View):
         self.context['role_checked'] = role_checked
         self.context['record'] = Record.objects.get(pk=record_id)
         self.context['is_owner'] = is_owner
+        self.context['is_removable'] = is_removable
+        return render(request, self.name, self.context)
+
+    def post(self, request, record_id):
+        if request.is_ajax():
+            # removing record
+            del_record = Record.objects.get(pk=record_id)
+            del_record.abstract_file.delete()
+            del_record.delete()
+            return JsonResponse({'success': True})
+        else:
+            # approving or declining record
+            if request.user.role.id > 2:
+                checked_record_form = CheckedRecordForm(request.POST)
+                if checked_record_form.is_valid():
+                    checked_record = checked_record_form.save(commit=False)
+                    checked_record.checked_by = request.user
+                    checked_record.record = Record.objects.get(pk=record_id)
+                    checked_record.status = request.POST.get('status')
+                    checked_record.save()
+                else:
+                    print('invalid form')
+                return redirect('records-view', record_id)
+
+
+class MyRecordView(View):
+    name = 'records/profile/view_myrecords.html'
+    author_roles = AuthorRole.objects.all()
+    classifications = Classification.objects.all()
+    psced_classifications = PSCEDClassification.objects.all().order_by('name')
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    publication_levels = PublicationLevel.objects.all()
+    checked_record_form = CheckedRecordForm()
+    context = {
+        'author_roles': author_roles,
+        'classifications': classifications,
+        'psced_classifications': psced_classifications,
+        'conference_levels': conference_levels,
+        'budget_types': budget_types,
+        'collaboration_types': collaboration_types,
+        'publication_levels': publication_levels,
+        'checked_record_form': checked_record_form,
+    }
+
+    @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_record_user())
+    def get(self, request, record_id):
+        checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
+        adviser_checked = {'status': 'pending'}
+        ktto_checked = {'status': 'pending'}
+        rdco_checked = {'status': 'pending'}
+        role_checked = False
+        is_removable = False
+        if request.user.role.pk > 3:
+            is_removable = True
+        for checked_record in checked_records:
+            if checked_record.checked_by.role.id == 3:
+                adviser_checked = checked_record
+            if checked_record.checked_by.role.id == 4:
+                ktto_checked = checked_record
+            if checked_record.checked_by.role.id == 5:
+                rdco_checked = checked_record
+            if checked_record.checked_by.role.id == request.user.role.pk:
+                role_checked=True
+            if checked_record.status == 'declined':
+                is_removable = True
+        if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
+            is_owner = True
+        self.context['adviser_checked'] = adviser_checked
+        self.context['ktto_checked'] = ktto_checked
+        self.context['rdco_checked'] = rdco_checked
+        self.context['role_checked'] = role_checked
+        self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_removable'] = is_removable
+        return render(request, self.name, self.context)
+
+    def post(self, request, record_id):
+        if request.is_ajax():
+            # removing record
+            del_record = Record.objects.get(pk=record_id)
+            del_record.abstract_file.delete()
+            del_record.delete()
+            return JsonResponse({'success': True})
+        else:
+            # approving or declining record
+            if request.user.role.id > 2:
+                checked_record_form = CheckedRecordForm(request.POST)
+                if checked_record_form.is_valid():
+                    checked_record = checked_record_form.save(commit=False)
+                    checked_record.checked_by = request.user
+                    checked_record.record = Record.objects.get(pk=record_id)
+                    checked_record.status = request.POST.get('status')
+                    checked_record.save()
+                else:
+                    print('invalid form')
+                return redirect('records-view', record_id)
+
+
+class ApprovedRecordView(View):
+    name = 'records/profile/view_approved.html'
+    author_roles = AuthorRole.objects.all()
+    classifications = Classification.objects.all()
+    psced_classifications = PSCEDClassification.objects.all().order_by('name')
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    publication_levels = PublicationLevel.objects.all()
+    checked_record_form = CheckedRecordForm()
+    context = {
+        'author_roles': author_roles,
+        'classifications': classifications,
+        'psced_classifications': psced_classifications,
+        'conference_levels': conference_levels,
+        'budget_types': budget_types,
+        'collaboration_types': collaboration_types,
+        'publication_levels': publication_levels,
+        'checked_record_form': checked_record_form,
+    }
+
+    @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_record_user())
+    def get(self, request, record_id):
+        checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
+        adviser_checked = {'status': 'pending'}
+        ktto_checked = {'status': 'pending'}
+        rdco_checked = {'status': 'pending'}
+        role_checked = False
+        is_removable = False
+        if request.user.role.pk > 3:
+            is_removable = True
+        for checked_record in checked_records:
+            if checked_record.checked_by.role.id == 3:
+                adviser_checked = checked_record
+            if checked_record.checked_by.role.id == 4:
+                ktto_checked = checked_record
+            if checked_record.checked_by.role.id == 5:
+                rdco_checked = checked_record
+            if checked_record.checked_by.role.id == request.user.role.pk:
+                role_checked=True
+            if checked_record.status == 'declined':
+                is_removable = True
+        if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
+            is_owner = True
+        self.context['adviser_checked'] = adviser_checked
+        self.context['ktto_checked'] = ktto_checked
+        self.context['rdco_checked'] = rdco_checked
+        self.context['role_checked'] = role_checked
+        self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_removable'] = is_removable
+        return render(request, self.name, self.context)
+
+    def post(self, request, record_id):
+        if request.is_ajax():
+            # removing record
+            del_record = Record.objects.get(pk=record_id)
+            del_record.abstract_file.delete()
+            del_record.delete()
+            return JsonResponse({'success': True})
+        else:
+            # approving or declining record
+            if request.user.role.id > 2:
+                checked_record_form = CheckedRecordForm(request.POST)
+                if checked_record_form.is_valid():
+                    checked_record = checked_record_form.save(commit=False)
+                    checked_record.checked_by = request.user
+                    checked_record.record = Record.objects.get(pk=record_id)
+                    checked_record.status = request.POST.get('status')
+                    checked_record.save()
+                else:
+                    print('invalid form')
+                return redirect('records-view', record_id)
+
+
+class DeclinedRecordView(View):
+    name = 'records/profile/view_declined.html'
+    author_roles = AuthorRole.objects.all()
+    classifications = Classification.objects.all()
+    psced_classifications = PSCEDClassification.objects.all().order_by('name')
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    publication_levels = PublicationLevel.objects.all()
+    checked_record_form = CheckedRecordForm()
+    context = {
+        'author_roles': author_roles,
+        'classifications': classifications,
+        'psced_classifications': psced_classifications,
+        'conference_levels': conference_levels,
+        'budget_types': budget_types,
+        'collaboration_types': collaboration_types,
+        'publication_levels': publication_levels,
+        'checked_record_form': checked_record_form,
+    }
+
+    @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_record_user())
+    def get(self, request, record_id):
+        checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
+        adviser_checked = {'status': 'pending'}
+        ktto_checked = {'status': 'pending'}
+        rdco_checked = {'status': 'pending'}
+        role_checked = False
+        is_removable = False
+        if request.user.role.pk > 3:
+            is_removable = True
+        for checked_record in checked_records:
+            if checked_record.checked_by.role.id == 3:
+                adviser_checked = checked_record
+            if checked_record.checked_by.role.id == 4:
+                ktto_checked = checked_record
+            if checked_record.checked_by.role.id == 5:
+                rdco_checked = checked_record
+            if checked_record.checked_by.role.id == request.user.role.pk:
+                role_checked=True
+            if checked_record.status == 'declined':
+                is_removable = True
+        if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
+            is_owner = True
+        self.context['adviser_checked'] = adviser_checked
+        self.context['ktto_checked'] = ktto_checked
+        self.context['rdco_checked'] = rdco_checked
+        self.context['role_checked'] = role_checked
+        self.context['record'] = Record.objects.get(pk=record_id)
         self.context['is_removable'] = is_removable
         return render(request, self.name, self.context)
 
@@ -444,7 +705,7 @@ class MyRecordsView(View):
                     rdco_checked = record_status
             data.append([
                 user_record.record.pk,
-                '<a href="/record/' + str(
+                '<a href="/record/myrecords/' + str(
                     user_record.record.pk) + '">' + user_record.record.title + '</a>',
                 adviser_checked,
                 ktto_checked,
@@ -471,7 +732,7 @@ class PendingRecordsView(View):
             for row in rows:
                 data.append([
                     row[0],
-                    '<a href="/record/' + str(row[0]) + '">' + row[1] + '</a>',
+                    '<a href="/record/pending/' + str(row[0]) + '">' + row[1] + '</a>',
                 ])
         elif request.user.role.id == 4:
             with connection.cursor() as cursor:
@@ -481,7 +742,7 @@ class PendingRecordsView(View):
             for row in rows:
                 data.append([
                     row[0],
-                    f'<a href="/record/{row[0]}">{row[1]}</a>'
+                    f'<a href="/record/pending/{row[0]}">{row[1]}</a>'
                 ])
 
         elif request.user.role.id == 5:
@@ -492,7 +753,7 @@ class PendingRecordsView(View):
             for row in rows:
                 data.append([
                     row[0],
-                    f'<a href="/record/{row[0]}">{row[1]}</a>'
+                    f'<a href="/record/pending/{row[0]}">{row[1]}</a>'
                 ])
         return JsonResponse({"data": data})
 
@@ -511,7 +772,7 @@ class ApprovedRecordsView(View):
         for checked_record in checked_records:
             data.append([
                 checked_record.record.pk,
-                f'<a href="/record/{checked_record.record.pk}">{checked_record.record.title}</a>'
+                f'<a href="/record/approved/{checked_record.record.pk}">{checked_record.record.title}</a>'
             ])
         return JsonResponse({'data':data})
 
@@ -530,6 +791,6 @@ class DeclinedRecordsView(View):
         for checked_record in checked_records:
             data.append([
                 checked_record.record.pk,
-                f'<a href="/record/{checked_record.record.pk}">{checked_record.record.title}</a>'
+                f'<a href="/record/declined/{checked_record.record.pk}">{checked_record.record.title}</a>'
             ])
-        return JsonResponse({'data':data})
+        return JsonResponse({'data': data})

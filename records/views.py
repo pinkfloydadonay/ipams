@@ -180,7 +180,6 @@ class PendingRecordView(View):
     }
 
     @method_decorator(login_required(login_url='/'))
-    @method_decorator(authorized_record_user())
     def get(self, request, record_id):
         checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
         adviser_checked = {'status': 'pending'}
@@ -193,11 +192,11 @@ class PendingRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = checked_record
+                adviser_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = checked_record
+                ktto_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = checked_record
+                rdco_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':
@@ -269,22 +268,25 @@ class MyRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = checked_record
+                adviser_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = checked_record
+                ktto_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = checked_record
+                rdco_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':
                 is_removable = True
         if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
             is_owner = True
+        if adviser_checked['status'] == 'pending' and ktto_checked['status'] == 'pending' and rdco_checked['status'] == 'pending':
+            is_removable = True
         self.context['adviser_checked'] = adviser_checked
         self.context['ktto_checked'] = ktto_checked
         self.context['rdco_checked'] = rdco_checked
         self.context['role_checked'] = role_checked
         self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_owner'] = is_owner
         self.context['is_removable'] = is_removable
         return render(request, self.name, self.context)
 
@@ -332,7 +334,6 @@ class ApprovedRecordView(View):
     }
 
     @method_decorator(login_required(login_url='/'))
-    @method_decorator(authorized_record_user())
     def get(self, request, record_id):
         checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
         adviser_checked = {'status': 'pending'}
@@ -344,11 +345,11 @@ class ApprovedRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = checked_record
+                adviser_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = checked_record
+                ktto_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = checked_record
+                rdco_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':
@@ -407,7 +408,6 @@ class DeclinedRecordView(View):
     }
 
     @method_decorator(login_required(login_url='/'))
-    @method_decorator(authorized_record_user())
     def get(self, request, record_id):
         checked_records = CheckedRecord.objects.filter(record=Record.objects.get(pk=record_id))
         adviser_checked = {'status': 'pending'}
@@ -419,11 +419,11 @@ class DeclinedRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = checked_record
+                adviser_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = checked_record
+                ktto_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = checked_record
+                rdco_checked = {'status': checked_record}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':

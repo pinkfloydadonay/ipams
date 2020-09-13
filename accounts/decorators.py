@@ -19,6 +19,7 @@ def authorized_roles(roles=None):
         return wrapper_func
     return decorator
 
+
 # authorize the owner or account above adviser
 def authorized_record_user():
     def decorator(view_func):

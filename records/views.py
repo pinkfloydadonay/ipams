@@ -345,11 +345,11 @@ class ApprovedRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = {'status': checked_record}
+                adviser_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = {'status': checked_record}
+                ktto_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = {'status': checked_record}
+                rdco_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':
@@ -419,11 +419,11 @@ class DeclinedRecordView(View):
             is_removable = True
         for checked_record in checked_records:
             if checked_record.checked_by.role.id == 3:
-                adviser_checked = {'status': checked_record}
+                adviser_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 4:
-                ktto_checked = {'status': checked_record}
+                ktto_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == 5:
-                rdco_checked = {'status': checked_record}
+                rdco_checked = {'status': checked_record.status}
             if checked_record.checked_by.role.id == request.user.role.pk:
                 role_checked=True
             if checked_record.status == 'declined':

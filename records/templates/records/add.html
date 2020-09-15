@@ -112,23 +112,9 @@
 			$("#collaboration-rows").append('<div class="row" id="collaboration-'+collaborationCount+'"><div class="col-4"><input type="text" name="industries[]" class="form-control" placeholder="Other Industry"></div><div class="col-4"><input type="text" name="institutions[]" class="form-control" placeholder="Institution"></div><div class="col-2"><select name="collaboration_types[]" class="form-control"> {% for collaboration_type in collaboration_types %} <option value="{{ collaboration_type.pk }}">{{ collaboration_type.name }}</option> {% endfor %} </select></div><div class="col-2"><button class="btn btn-danger" type="button" onclick="removeCollaboration('+collaborationCount+')">REMOVE</button></div></div>');
 		});
 
-		/*$("#btn-save").on("click",function(){
-			$.ajax({
-				headers: {
-                    'X-CSRF-Token': $("meta[name='csrf-token']").attr("content")
-                },
-				url: $("#form-record").attr("action"),
-				type: $("#form-record").attr("method"),
-				data: $("#form-record").serialize(),
-				dataType: "json",
-				success: function(data){
-					alert("success ");
-				},
-				error: function(data){
-					alert("error");
-				},
-			});
-		});*/
+		$("#btn-record-submit").on("click",function(){
+			$("#form-record").submit();
+		});
 
 		$(document).ready(function(){
 			$(".btn-next").click(function(){
@@ -205,7 +191,31 @@
 						</section>
 					</div>
 				</div>
+				<!-- -------------------------------------------MODAL------------------------------------------------------------- -->
+				<div class="modal fade" id="record-submit-modal" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<form method="post" id="form-change-role">
+								<div class="modal-header base-bg-primary">
+									<h5 class="modal-title">Submit</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<label>Adviser's ID: <input id="adviser-id" name="adviser-id" type="text" class="form-control"></label>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" id="btn-record-submit" class="btn base-btn base-bg-primary">Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
+
+
 {% endblock %}

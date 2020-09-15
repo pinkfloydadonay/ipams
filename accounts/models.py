@@ -53,3 +53,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserRecord(models.Model):
 	record = models.ForeignKey(Record, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	adviser = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='userrecord_adviser_set', null=True, blank=True)

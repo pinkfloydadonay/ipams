@@ -63,19 +63,19 @@
 
         function checkStatusClick(role){
             if(role == 'adviser'){
-                $("#checked-status-title").html("{{ adviser_checked.status }}");
-                $("#checked-status-date").val("{{ adviser_checked.date_created }}");
-                $("#checked-status-comment").html("{{ adviser_checked.comment }}");
+                $("#checked-status-title").html("{{ adviser_checked.content.status }}");
+                $("#checked-status-date").val("{{ adviser_checked.content.date_created }}");
+                $("#checked-status-comment").html("{{ adviser_checked.content.comment }}");
             }
             else if(role == 'ktto'){
-                $("#checked-status-title").html("{{ ktto_checked.status }}");
-                $("#checked-status-date").val("{{ ktto_checked.date_created }}");
-                $("#checked-status-comment").html("{{ ktto_checked.comment }}");
+                $("#checked-status-title").html("{{ ktto_checked.content.status }}");
+                $("#checked-status-date").val("{{ ktto_checked.content.date_created }}");
+                $("#checked-status-comment").html("{{ ktto_checked.content.comment }}");
             }
             else if(role == 'rdco'){
-                $("#checked-status-title").html("{{ rdco_checked.status }}");
-                $("#checked-status-date").val("{{ rdco_checked.date_created }}");
-                $("#checked-status-comment").html("{{ rdco_checked.comment }}");
+                $("#checked-status-title").html("{{ rdco_checked.content.status }}");
+                $("#checked-status-date").val("{{ rdco_checked.content.date_created }}");
+                $("#checked-status-comment").html("{{ rdco_checked.content.comment }}");
             }
             
             $("#checked-status-modal").modal("show");

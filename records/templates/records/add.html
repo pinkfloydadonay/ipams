@@ -135,6 +135,19 @@
 			});
 		{% endfor %}
 	</script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+		var input = $("#owners-id")[0];
+    	tagify = new Tagify(input, {
+			enforceWhitelist:true,
+			whitelist:[{"value":"test", "id":1}, {"value":"test2", "id":"2"}],
+			blacklist: [{"value":"test3", "id":"3"}, {"value":"test4", "id":"4"}],
+			dropdown:{enabled:0}
+    	});
+    });
+
+</script>
 
 {% endblock %}
 
@@ -203,6 +216,7 @@
 									</button>
 								</div>
 								<div class="modal-body">
+									<label>Owners:</label> <input type="text" class="form-control" id="owners-id" name="owners-id">
 									<label>Adviser's ID: <input id="adviser-id" name="adviser-id" type="text" class="form-control"></label>
 								</div>
 								<div class="modal-footer">

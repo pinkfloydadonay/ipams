@@ -44,7 +44,6 @@
 		    	    	"headers": { "X-CSRFToken": '{{ csrf_token }}' },
 		    	    	"type": "post",
                         "success": function(data){
-                            alert("success");
                         },
                         "error": function(data){
                             alert("error");
@@ -54,7 +53,9 @@
                       'Deleted!',
                       'Your record has been deleted.',
                       'success'
-                    )
+                    ).then((result) => {
+                        window.location.replace("{% url 'records-myrecords' %}");
+                    });
                   }
                 })
             });

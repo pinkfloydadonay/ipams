@@ -340,6 +340,7 @@ class ApprovedRecordView(View):
         ktto_checked = {'status': 'pending'}
         rdco_checked = {'status': 'pending'}
         role_checked = False
+        is_owner = False
         is_removable = False
         if request.user.role.pk > 3:
             is_removable = True
@@ -361,6 +362,7 @@ class ApprovedRecordView(View):
         self.context['rdco_checked'] = rdco_checked
         self.context['role_checked'] = role_checked
         self.context['record'] = Record.objects.get(pk=record_id)
+        self.context['is_owner'] = is_owner
         self.context['is_removable'] = is_removable
         return render(request, self.name, self.context)
 
@@ -494,7 +496,9 @@ class Add(View):
                 file_is_valid = False
             else:
                 record.save()
-                UserRecord(user=request.user, record=record, adviser=User.objects.get(pk=int(request.POST.get('adviser-id')))).save()
+                owners = json.loads(request.POST.get('owners-id'))
+                adviser = json.loads(request.POST.get('adviser-id'))
+                UserRecord(user=request.user, record=record, adviser=User.objects.get(pk=int(adviser[0].id))).save()
             if record is not None and file_is_valid:
                 publication_form = forms.PublicationForm(request.POST)
                 if publication_form.is_valid():

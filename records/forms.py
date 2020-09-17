@@ -1,5 +1,4 @@
 from django import forms
-
 from records.models import Record, Publication, Conference, Author, Collaboration, Budget, AuthorRole, PublicationLevel, \
     Classification, PSCEDClassification, CheckedRecord
 

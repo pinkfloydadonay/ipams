@@ -4,7 +4,7 @@ import mimetypes
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import DataError, connection
-from django.db.models import Count, Subquery
+from django.db.models import Count, Subquery, F
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, JsonResponse
@@ -488,17 +488,29 @@ class Add(View):
     def post(self, request):
         error_messages = []
         record_form = forms.RecordForm(request.POST, request.FILES)
-        if record_form.is_valid():
+        if request.is_ajax():
+            if request.POST.get("get_user_tags", 'false') == 'true':
+                users = []
+                advisers = []
+                for user in User.objects.all():
+                    users.append({'value': user.username, 'id': user.pk})
+                for user in User.objects.filter(role__in=[3, 4, 5]):
+                    advisers.append({'value': user.username, 'id': user.pk})
+                return JsonResponse({'users': users, 'advisers': advisers})
+        if record_form.is_valid() and not request.is_ajax():
             record = record_form.save(commit=False)
             file_is_valid = True
             file = record_form.cleaned_data.get('abstract_file', False)
+            # check uploaded file size if valid
             if file and file.size > 5242880:
                 file_is_valid = False
+            # saving record to database
             else:
                 record.save()
                 owners = json.loads(request.POST.get('owners-id'))
                 adviser = json.loads(request.POST.get('adviser-id'))
-                UserRecord(user=request.user, record=record, adviser=User.objects.get(pk=int(adviser[0].id))).save()
+                for owner in owners:
+                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record, adviser=User.objects.get(pk=int(adviser[0]['id']))).save()
             if record is not None and file_is_valid:
                 publication_form = forms.PublicationForm(request.POST)
                 if publication_form.is_valid():

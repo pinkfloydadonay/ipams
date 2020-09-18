@@ -138,13 +138,37 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-		var input = $("#owners-id")[0];
-    	tagify = new Tagify(input, {
-			enforceWhitelist:true,
-			whitelist:[{"value":"test", "id":1}, {"value":"test2", "id":"2"}],
-			blacklist: [{"value":"test3", "id":"3"}, {"value":"test4", "id":"4"}],
-			dropdown:{enabled:0}
-    	});
+    	$.ajax({
+			headers: { "X-CSRFToken": '{{ csrf_token }}' },
+			data: {"get_user_tags": "true"},
+			dataType:"json",
+			type: "post",
+			success: function(data){
+				var users = data["users"];
+				var advisers = data["advisers"];
+				var ownersInput = $("#owners-id")[0];
+				var adviserInput = $("#adviser-id")[0];
+    			new Tagify(ownersInput, {
+					enforceWhitelist:true,
+					whitelist: users,
+					dropdown:{enabled:1}
+    			}).addTags([{
+    				"value": "{{ user.username }}",
+    				"id": "{{ user.pk }}",
+    			}]);
+    			new Tagify(adviserInput, {
+					enforceWhitelist:true,
+					whitelist: advisers,
+					dropdown:{enabled:1},
+					maxTags: 1
+    			});
+			},
+			error: function(data){
+				alert("error");
+			}
+		});
+
+
     });
 
 </script>
@@ -216,8 +240,8 @@
 									</button>
 								</div>
 								<div class="modal-body">
-									<label>Owners:</label> <input type="text" class="form-control" id="owners-id" name="owners-id">
-									<label>Adviser's ID: <input id="adviser-id" name="adviser-id" type="text" class="form-control"></label>
+									<label>Owners:</label> <input placeholder="search username" type="text" class="form-control" id="owners-id" name="owners-id">
+									<label>Adviser to be submitted to:</label> <input placeholder="search username" id="adviser-id" name="adviser-id" type="text" class="form-control">
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

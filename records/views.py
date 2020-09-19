@@ -506,11 +506,12 @@ class Add(View):
                 file_is_valid = False
             # saving record to database
             else:
-                record.save()
                 owners = json.loads(request.POST.get('owners-id'))
                 adviser = json.loads(request.POST.get('adviser-id'))
+                record.adviser = User.objects.get(pk=adviser[0]['id'])
+                record.save()
                 for owner in owners:
-                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record, adviser=User.objects.get(pk=int(adviser[0]['id']))).save()
+                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
             if record is not None and file_is_valid:
                 publication_form = forms.PublicationForm(request.POST)
                 if publication_form.is_valid():
@@ -741,7 +742,7 @@ class PendingRecordsView(View):
     def post(self, request):
         if request.user.role.id == 3:
             with connection.cursor() as cursor:
-                cursor.execute(f"select records_record.id, records_record.title, records_checkedrecord.checked_by_id, accounts_userrecord.adviser_id from records_record left join records_checkedrecord on records_record.id = records_checkedrecord.record_id inner join accounts_userrecord on records_record.id = accounts_userrecord.record_id where checked_by_id is NULL and accounts_userrecord.adviser_id = {request.user.pk}")
+                cursor.execute(f"select records_record.id, records_record.title, records_checkedrecord.checked_by_id from records_record left join records_checkedrecord on records_record.id = records_checkedrecord.record_id where checked_by_id is NULL and records_record.adviser_id = {request.user.pk}")
                 rows = cursor.fetchall()
 
             data = []

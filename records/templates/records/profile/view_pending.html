@@ -64,16 +64,19 @@
         function checkStatusClick(role){
             if(role == 'adviser'){
                 $("#checked-status-title").html("{{ adviser_checked.content.status }}");
+                $("#checked-status-checkedby").val("{{ adviser_checked.content.checked_by.username }}");
                 $("#checked-status-date").val("{{ adviser_checked.content.date_created }}");
                 $("#checked-status-comment").html("{{ adviser_checked.content.comment }}");
             }
             else if(role == 'ktto'){
                 $("#checked-status-title").html("{{ ktto_checked.content.status }}");
+                $("#checked-status-checkedby").val("{{ ktto_checked.content.checked_by.username }}");
                 $("#checked-status-date").val("{{ ktto_checked.content.date_created }}");
                 $("#checked-status-comment").html("{{ ktto_checked.content.comment }}");
             }
             else if(role == 'rdco'){
                 $("#checked-status-title").html("{{ rdco_checked.content.status }}");
+                $("#checked-status-checkedby").val("{{ rdco_checked.content.checked_by.username }}");
                 $("#checked-status-date").val("{{ rdco_checked.content.date_created }}");
                 $("#checked-status-comment").html("{{ rdco_checked.content.comment }}");
             }
@@ -111,14 +114,18 @@
                 </tr>
             </table>
         </div>
-        <div class="col-6 d-flex justify-content-end">
-        {% if not role_checked and user.role.pk > 2 %}
-            <a type="button" href="#" id="btn-approve">Approve</a> |
-            <a type="button" href="#" id="btn-decline">Decline</a> 
-        {% endif %}
-        {% if is_removable %}
-            <button type="button" id="btn-remove">remove</button>
-        {% endif %}
+        <div class="col-6">
+            <div style="float: right;">
+                {% if not role_checked and user.role.pk > 2 %}
+                    <a href="#" id="btn-approve">Approve</a> |
+                    <a href="#" id="btn-decline">Decline</a>
+                {% endif %}
+                {% if is_removable %}
+                    <a href="#" id="btn-remove">remove</a>
+                {% endif %}
+            </div>
+            <br><b>Adviser:</b> {{ record.adviser.username }}
+            <br><b>Date Submitted:</b> {{ record.date_created }}
         </div>
     </div>
     <form method="post" action="{% url 'records-add' %}" id="form-record">
@@ -234,6 +241,11 @@
             </div>
             <div class="modal-body">
                 <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="checked-status-checkedby">Checked By: </label><input id="checked-status-checkedby" type="text" class="form-control" readonly>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-12">
                             <label for="checked-status-date">Date Checked: </label><input id="checked-status-date" type="text" class="form-control" readonly>

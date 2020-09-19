@@ -66,6 +66,7 @@ class Record(models.Model):
     psced_classification = models.ForeignKey(PSCEDClassification, on_delete=models.DO_NOTHING)
     abstract_file = models.FileField(upload_to='abstract/', null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    adviser = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
         return self.title

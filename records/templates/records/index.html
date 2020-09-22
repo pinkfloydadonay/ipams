@@ -95,7 +95,12 @@
 				"year_to":"",
 				"classification":"",
 				"psced_classification":"",
+				"author":"",
+				"conference":"",
 				"publication":"",
+				"budget_min":"",
+				"budget_max":"",
+				"collaborator":"",
 				"is_filtered":"",
 			}
 			if($("#year_cb").is(":checked")){
@@ -104,8 +109,21 @@
 			}
 			filters['classification']=$("#id_classification").val();
 			filters['psced_classification']=$("#id_psced_classification").val();
+			if($("#author_cb").is(":checked")){
+				filters["author"]=$("#author").val();
+			}
+			if($("#conference_cb").is(":checked")){
+				filters["conference"]=$("#conference").val();
+			}
 			if($("#publication_cb").is(":checked")){
 				filters['publication']=$("#publication").val();
+			}
+			if($("#budget_cb").is(":checked")){
+				filters['budget_min']=$("#budget_min").val();
+				filters['budget_max']=$("#budget_max").val();
+			}
+			if($("#collaborator_cb").is(":checked")){
+				filters['collaborator']=$("#collaborator").val();
 			}
 			filters['is_filtered']=true;
 			recordsTbl.clear().destroy();
@@ -685,7 +703,7 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-7">
-							<input class="form-control">
+							<input class="form-control" id="author" name="author">
 						</div>
 					</div>
 			  		<div class="row" style="margin-top:10px">
@@ -698,7 +716,7 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-7">
-							<input class="form-control">
+							<input class="form-control" id="conference" name="conference">
 						</div>
 					</div>
 					<div class="row" style="margin-top:10px">
@@ -724,10 +742,10 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-3">
-							<input class="form-control" placeholder="min">
+							<input class="form-control" placeholder="min" id="budget_min" name="budget_min">
 						</div>
 						<div class="col-lg-3">
-							<input class="form-control" placeholder="max">
+							<input class="form-control" placeholder="max" id="budget_max" name="budget_max">
 						</div>
 					</div>
 					<div class="row" style="margin-top:10px">
@@ -740,7 +758,7 @@ section with the new entry.</li>
 							</div>
 						</div>
 						<div class="col-lg-7">
-							<input class="form-control">
+							<input class="form-control" id="collaborator" name="collaborator">
 						</div>
 					</div>
 				</div>

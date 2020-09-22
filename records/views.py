@@ -4,7 +4,7 @@ import mimetypes
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import DataError, connection
-from django.db.models import Count, Subquery, F
+from django.db.models import Count, Subquery, F, Q, Sum
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, JsonResponse
@@ -83,12 +83,16 @@ class Home(View):
                 return JsonResponse({'success': success})
             # filtering records
             elif request.POST.get('is_filtered') == 'true':
-                print(request.POST)
                 year_from_filter = request.POST.get('year_from', '0')
                 year_to_filter = request.POST.get('year_to', '0')
                 classification_filter = request.POST.get('classification')
                 psced_classification_filter = request.POST.get('psced_classification')
+                author_filter = request.POST.get('author')
+                conference_filter = request.POST.get('conference')
                 publication_filter = request.POST.get('publication')
+                budget_min_filter = request.POST.get('budget_min')
+                budget_max_filter = request.POST.get('budget_max')
+                collaborator_filter = request.POST.get('collaborator')
                 if year_from_filter != '' or year_to_filter != '':
                     records = records.filter(year_accomplished__gte=year_from_filter)\
                         .filter(year_accomplished__lte=year_to_filter)
@@ -96,12 +100,27 @@ class Home(View):
                     records = records.filter(classification=classification_filter)
                 if psced_classification_filter != '':
                     records = records.filter(psced_classification=psced_classification_filter)
+                if author_filter != '':
+                    records = records.filter(pk__in=Author.objects.filter(name__contains=author_filter).values('record_id'))
+                if conference_filter != '':
+                    records = records.filter(pk__in=Conference.objects.filter(title__contains=conference_filter).values('record_id'))
                 if publication_filter != '':
                     publications = Publication.objects.filter(name=publication_filter)
                     if len(publications) > 0:
                         records = records.filter(publication=publications.first())
                     else:
                         records = []
+                if budget_min_filter != "" or budget_max_filter != "":
+                    min = 0
+                    if budget_min_filter != "":
+                        min = float(budget_min_filter)
+                    if budget_max_filter != "":
+                        max = float(budget_max_filter)
+                        records = records.filter(pk__in=Budget.objects.values('record_id').annotate(Sum('budget_allocation')).filter(budget_allocation__sum__range=(min, max)).values('record_id'))
+                    else:
+                        records = records.filter(pk__in=Budget.objects.values('record_id').annotate(Sum('budget_allocation')).filter(Q(budget_allocation__sum__gte=min)).values('record_id'))
+                if collaborator_filter != '':
+                    records = records.filter(Q(pk__in=Collaboration.objects.filter(industry__contains=collaborator_filter).values('record_id')) | Q(pk__in=Collaboration.objects.filter(institution__contains=collaborator_filter).values('record_id')))
             # accounts role change
             elif request.POST.get('role-change') == 'true':
                 accounts = request.POST.getlist('accounts[]')

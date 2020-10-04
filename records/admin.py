@@ -14,6 +14,7 @@ all_models = [
     models.Budget,
     models.CollaborationType,
     models.Record,
+    models.RecordType,
     models.CheckedRecord,
     models.PublicationLevel,
 ]

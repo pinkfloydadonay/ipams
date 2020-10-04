@@ -58,6 +58,14 @@ class CollaborationType(models.Model):
         return self.name
 
 
+class RecordType(models.Model):
+    name = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Record(models.Model):
     title = models.CharField(max_length=100)
     year_accomplished = models.CharField(max_length=30)
@@ -67,6 +75,7 @@ class Record(models.Model):
     abstract_file = models.FileField(upload_to='abstract/', null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     adviser = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING, null=True, blank=True)
+    type = models.ForeignKey(RecordType, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
         return self.title

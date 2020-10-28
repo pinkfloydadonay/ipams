@@ -21,21 +21,13 @@
   <component name="ChangeListManager">
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_auto_20200825_1400.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_auto_20200827_1113.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0003_auto_20200827_1217.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0004_auto_20200827_1219.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0005_userrecord_adviser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0006_remove_userrecord_adviser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/init_accounts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0001_recordstatus.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0002_auto_20200830_1118.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0003_record_adviser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0004_auto_20201004_2305.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/init_records.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,11 +54,12 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/records/templates/records/profile" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/records/templates/records/add_record" />
     <property name="settings.editor.selected.configurable" value="restructured.text.topic" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/records/templates/records/add_record" />
       <recent name="$PROJECT_DIR$/records/templates/records/profile" />
       <recent name="D:\Neil\ipams\records\templates\records\profile" />
       <recent name="D:\Neil\ipams\staticfiles" />

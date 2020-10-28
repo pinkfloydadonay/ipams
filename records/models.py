@@ -75,7 +75,7 @@ class Record(models.Model):
     abstract_file = models.FileField(upload_to='abstract/', null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     adviser = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING, null=True, blank=True)
-    type = models.ForeignKey(RecordType, on_delete=models.DO_NOTHING, null=True, blank=True)
+    record_type = models.ForeignKey(RecordType, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -130,3 +130,14 @@ class Collaboration(models.Model):
     collaboration_type = models.ForeignKey(CollaborationType, on_delete=models.DO_NOTHING)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
+
+
+class Upload(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class RecordUpload(models.Model):
+    file = models.FileField(upload_to='abstract/', null=True, blank=True)
+    upload = models.ForeignKey(Upload, on_delete=models.DO_NOTHING)
+    record = models.ForeignKey(Record, on_delete=models.DO_NOTHING)
+    date_uploaded = models.DateTimeField(auto_now_add=True)

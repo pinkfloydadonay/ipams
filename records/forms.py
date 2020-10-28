@@ -10,7 +10,7 @@ class RecordForm(forms.ModelForm):
 
     class Meta:
         model = Record
-        fields = ('title', 'year_accomplished', 'abstract', 'classification', 'psced_classification', 'abstract_file')
+        fields = ('title', 'year_accomplished', 'abstract', 'classification', 'psced_classification', 'abstract_file', 'record_type')
 
     def save(self, commit=True):
         title = self.cleaned_data.get('title')

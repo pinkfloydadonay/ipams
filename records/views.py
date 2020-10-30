@@ -13,7 +13,8 @@ from accounts.decorators import authorized_roles, authorized_record_user
 from accounts.models import User, UserRole, UserRecord
 from .forms import AssessmentForm, CheckedRecordForm
 from .models import Record, AuthorRole, Classification, PSCEDClassification, ConferenceLevel, BudgetType, \
-    CollaborationType, Author, Conference, PublicationLevel, Publication, Budget, Collaboration, CheckedRecord
+    CollaborationType, Author, Conference, PublicationLevel, Publication, Budget, Collaboration, CheckedRecord, Upload, \
+    RecordUpload
 from django.shortcuts import redirect
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
@@ -22,6 +23,9 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from . import forms
 from accounts.forms import LoginForm
+
+
+FILE_LENGTH = 5242880
 
 
 class Home(View):
@@ -489,7 +493,7 @@ class Add(View):
     collaboration_types = CollaborationType.objects.all()
     record_form = forms.RecordForm()
     publication_form = forms.PublicationForm()
-    record = Record.objects.all()
+    uploads = Upload.objects.all()
 
     @method_decorator(authorized_roles(roles=['student', 'adviser', 'ktto', 'rdco']))
     @method_decorator(login_required(login_url='/'))
@@ -501,12 +505,14 @@ class Add(View):
             'collaboration_types': self.collaboration_types,
             'record_form': self.record_form,
             'publication_form': self.publication_form,
+            'uploads': self.uploads,
         }
         return render(request, self.name, context)
 
     def post(self, request):
         error_messages = []
         record_form = forms.RecordForm(request.POST, request.FILES)
+        record_upload_form = forms.RecordUploadForm(request.POST, request.FILES)
         if request.is_ajax():
             if request.POST.get("get_user_tags", 'false') == 'true':
                 users = []
@@ -521,7 +527,7 @@ class Add(View):
             file_is_valid = True
             file = record_form.cleaned_data.get('abstract_file', False)
             # check uploaded file size if valid
-            if file and file.size > 5242880:
+            if file and file.size > FILE_LENGTH:
                 file_is_valid = False
             # saving record to database
             else:
@@ -529,6 +535,11 @@ class Add(View):
                 adviser = json.loads(request.POST.get('adviser-id'))
                 record.adviser = User.objects.get(pk=adviser[0]['id'])
                 record.save()
+                # patent search files check
+                for upload in Upload.objects.all():
+                    if request.FILES.get(f'upload-{upload.pk}', None):
+                        record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
+                                                     upload=upload).save()
                 for owner in owners:
                     UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
             if record is not None and file_is_valid:

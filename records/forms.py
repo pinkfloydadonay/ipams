@@ -1,6 +1,6 @@
 from django import forms
 from records.models import Record, Publication, Conference, Author, Collaboration, Budget, AuthorRole, PublicationLevel, \
-    Classification, PSCEDClassification, CheckedRecord
+    Classification, PSCEDClassification, CheckedRecord, RecordUpload
 
 ASSESSMENT_CHOICES = (('pending', 'pending'), ('approved', 'approved'), ('declined', 'declined'))
 
@@ -82,6 +82,14 @@ class CheckedRecordForm(forms.ModelForm):
     class Meta:
         model = CheckedRecord
         fields = ('comment',)
+
+
+class RecordUploadForm(forms.ModelForm):
+    use_required_attribute = False
+
+    class Meta:
+        model = RecordUpload
+        fields = ('upload', 'record', 'file')
 
 
 class AssessmentForm(forms.Form):

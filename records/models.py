@@ -135,9 +135,14 @@ class Collaboration(models.Model):
 class Upload(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class RecordUpload(models.Model):
-    file = models.FileField(upload_to='abstract/', null=True, blank=True)
+    file = models.FileField(upload_to='documents/', null=True, blank=True)
     upload = models.ForeignKey(Upload, on_delete=models.DO_NOTHING)
     record = models.ForeignKey(Record, on_delete=models.DO_NOTHING)
+    is_ip = models.BooleanField(default=False)
+    for_commercialization = models.BooleanField(default=False)
     date_uploaded = models.DateTimeField(auto_now_add=True)

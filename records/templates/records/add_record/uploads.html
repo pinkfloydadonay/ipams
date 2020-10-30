@@ -19,9 +19,14 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-12">
-		test
-	</div>
+	{% for upload in uploads %}
+		<div class="col-9">
+			{{ upload.name }}
+		</div>
+		<div class="col-3 d-flex justify-content-end">
+			<input type="file" name="upload-{{ upload.pk }}">
+		</div>
+	{% endfor %}
 </div>
 <div class="row" style="margin-top:10px;">
 	<div class="col-12 d-flex justify-content-end">

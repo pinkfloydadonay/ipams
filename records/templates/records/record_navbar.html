@@ -6,5 +6,8 @@
 		<a class="nav-item nav-link nav-main publication d-none d-lg-block" data-toggle="tab" href="#nav-publication" role="tab" id="nav-item-4" onclick="classificationClick('4')">Publication</a>
 		<a class="nav-item nav-link nav-main budget d-none d-lg-block" data-toggle="tab" href="#nav-budget" role="tab" id="nav-item-5" onclick="classificationClick(5)">Budget</a>
 		<a class="nav-item nav-link nav-main collaboration d-none d-lg-block" data-toggle="tab" href="#nav-collaboration" role="tab" id="nav-item-6" onclick="classificationClick('6')">Collaboration</a>
+		{% if user.role.id > 2 or is_owner %}
+		<a class="nav-item nav-link nav-main uploads d-none d-lg-block" data-toggle="tab" href="#nav-uploads" role="tab" id="nav-item-7" onclick="classificationClick('7')">Uploads</a>
+		{% endif %}
 	</div>
 </nav>

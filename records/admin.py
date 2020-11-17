@@ -16,8 +16,11 @@ all_models = [
     models.Record,
     models.RecordType,
     models.CheckedRecord,
+    models.ResearchRecord,
     models.PublicationLevel,
     models.Upload,
     models.RecordUpload,
+    models.CheckedUploadsStatusType,
+    models.CheckedUpload,
 ]
 admin.site.register(all_models)

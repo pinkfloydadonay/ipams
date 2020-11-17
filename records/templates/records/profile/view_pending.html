@@ -43,6 +43,44 @@
                   }
                 })
             });
+
+		    // updating tags when checkbox is clicked
+            $("#ip").on("click", function(){
+                $.ajax({
+		    		headers: { "X-CSRFToken": '{{ csrf_token }}' },
+		    		dataType:"json",
+		    		type: "post",
+		    		data: {
+		    		    "tags_update": true,
+		    		    "ip": $("#ip").is(":checked"),
+		    		    "commercialization": $("#commercialization").is(":checked"),
+		    		},
+		    		success: function(response){
+
+		    		},
+		    		error: function(response){
+		    		    alert("error");
+		    		},
+		    	});
+            });
+            $("#commercialization").on("click", function(){
+                $.ajax({
+		    		headers: { "X-CSRFToken": '{{ csrf_token }}' },
+		    		dataType:"json",
+		    		type: "post",
+		    		data: {
+		    		    "tags_update": true,
+		    		    "ip": $("#ip").is(":checked"),
+		    		    "commercialization": $("#commercialization").is(":checked"),
+		    		},
+		    		success: function(response){
+
+		    		},
+		    		error: function(response){
+		    		    alert("error");
+		    		},
+		    	});
+            });
         });
 
         function classificationClick(id, copy=false){
@@ -83,6 +121,67 @@
             
             $("#checked-status-modal").modal("show");
         }
+
+        function onUploadTitleClick(upload_id, record_id){
+            $.ajax({
+				headers: { "X-CSRFToken": '{{ csrf_token }}' },
+				dataType:"json",
+				type: "post",
+				data: {"get_document": "true", "upload_id": upload_id, "record_id": record_id},
+				success: function(response){
+			        $("#uploads").hide();
+			        $("#uploads-title").show();
+			        if(response["success"]){
+			            doc_comments = "";
+			            for(var i=0; i<response["checked_dates"].length; i++){
+			                doc_comments+='<div class="card" style="background-color:#dbdbdb; margin-bottom:10px;"><div class="card-body"><h5 class="card-title">'+response["statuses"][i]+'</h5><p class="card-text">'+response["comments"][i]+'</p><h6 class="card-subtitle mb-2 text-muted">'+response["checked_dates"][i]+'</h6><h6 class="card-subtitle mb-2 text-muted">'+response["checked_bys"][i]+'</h6></div></div>';
+			            }
+				        $("#doc-title").html(""+response["doc-title"]);
+				        $("#doc-link").html('<a href="/download/document/'+response['record-upload-id']+'">Download document</a>');
+				        $("#doc-comments").html(doc_comments);
+				        $("#doc-comments").append('<textarea class="form-control" id="write-comment" rows="3" placeholder="Write a comment..." style="margin-top:15px;"></textarea>');
+				        $("#doc-status").show();
+				    }
+				    else{
+				        $("#doc-title").html(""+response["doc-title"]);
+				        $("#doc-link").html("(document not yet uploaded)");
+				        $("#doc-comments").html("");
+				        $("#doc-status").hide();
+				    }
+
+                    // POSTING COMMENT
+                    $("#btn-uploads-post").on("click", function(){
+                        $.ajax({
+                            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                            dataType:"json",
+                            type: "post",
+                            data: {
+                                "post_comment": true,
+                                "comment": $("#write-comment").val(),
+                                "uploads_status_type": $("#uploads-status-type").val(),
+                                "upload_id": upload_id,
+		            		    "record_id": record_id
+                            },
+                            success: function(response){
+                                onUploadTitleClick(upload_id, record_id);
+                            },
+                            error: function(response){
+                                alert("error");
+                            },
+                        });
+                    });
+				},
+				error: function(response){
+				    alert("error");
+				},
+            });
+        }
+
+
+        $("#btn-uploads-back").on("click", function(){
+            $("#uploads").show();
+            $("#uploads-title").hide();
+        });
 	</script>
 {% endblock %}
 
@@ -126,6 +225,16 @@
             </div>
             <br><b>Adviser:</b> {{ record.adviser.username }}
             <br><b>Date Submitted:</b> {{ record.date_created }}
+            <div id="doc-tags" style="margin-top:10px">
+                <div class="form-check form-check">
+                    <input type="checkbox" class="form-check-input" id="ip" {% if user.role.pk < 3 %} disabled {% endif %}{% if record.is_ip %} checked {% endif %}>
+                    <label class="form-check-label" for="ip">Intellectual Property</label>
+                </div>
+                <div class="form-check form-check">
+                    <input type="checkbox" class="form-check-input" id="commercialization" {% if user.role.pk < 3 %} disabled {% endif %}{% if record.for_commercialization %} checked {% endif %}>
+                    <label class="form-check-label" for="commercialization">For Commercialization</label>
+                </div>
+            </div>
         </div>
     </div>
     <form method="post" action="{% url 'records-add' %}" id="form-record">
@@ -189,6 +298,18 @@
                 </section>
             </div>
 
+            <!------------------------------------UPLOADS---------------------------------------------------->
+
+            <a class="nav-item nav-link nav-main uploads col-12 d-lg-none nav-copy" data-toggle="tab" href="#" id="nav-item-c7" onclick="classificationClick('7',true)">Uploads</a>
+            <div class="tab-pane fade" id="nav-uploads" role="tabpanel">
+                <div class="main-header uploads"></div>
+                <section id="uploads" class="main-content">
+                    {% include 'records/view_record/uploads.html' %}
+                </section>
+                <section id="uploads-title" class="main-content" style="display:None;">
+                    {% include 'records/view_record/uploads_title.html' %}
+                </section>
+            </div>
         </div>
         <div class="row" style="margin-bottom:30px">
             <div class="col-12 d-flex justify-content-end">

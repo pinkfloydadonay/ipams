@@ -73,12 +73,19 @@ class Record(models.Model):
     classification = models.ForeignKey(Classification, on_delete=models.DO_NOTHING)
     psced_classification = models.ForeignKey(PSCEDClassification, on_delete=models.DO_NOTHING)
     abstract_file = models.FileField(upload_to='abstract/', null=True, blank=True)
+    is_ip = models.BooleanField(default=False)
+    for_commercialization = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     adviser = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING, null=True, blank=True)
     record_type = models.ForeignKey(RecordType, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+
+class ResearchRecord(models.Model):
+    proposal = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='proposal')
+    research = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='research', null=True, blank=True)
 
 
 class CheckedRecord(models.Model):
@@ -134,6 +141,7 @@ class Collaboration(models.Model):
 
 class Upload(models.Model):
     name = models.CharField(max_length=100)
+    record_type = models.ForeignKey(RecordType, default=1, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.name
@@ -141,8 +149,21 @@ class Upload(models.Model):
 
 class RecordUpload(models.Model):
     file = models.FileField(upload_to='documents/', null=True, blank=True)
-    upload = models.ForeignKey(Upload, on_delete=models.DO_NOTHING)
-    record = models.ForeignKey(Record, on_delete=models.DO_NOTHING)
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    record = models.ForeignKey(Record, on_delete=models.CASCADE)
     is_ip = models.BooleanField(default=False)
     for_commercialization = models.BooleanField(default=False)
     date_uploaded = models.DateTimeField(auto_now_add=True)
+
+
+class CheckedUploadsStatusType(models.Model):
+    name = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+
+class CheckedUpload(models.Model):
+    status = models.ForeignKey(CheckedUploadsStatusType, on_delete=models.CASCADE)
+    comment = models.TextField()
+    checked_by = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING)
+    record_upload = models.ForeignKey(RecordUpload, on_delete=models.CASCADE)
+    date_checked = models.DateTimeField(auto_now_add=True)

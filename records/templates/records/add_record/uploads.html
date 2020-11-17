@@ -9,6 +9,7 @@
 				<li class="active">Publication</li>
 				<li class="active">Budget</li>
 				<li class="active">Collaboration</li>
+				<li class="active">Uploads</li>
 			</ul>
 		</div>
 	</div>
@@ -18,16 +19,37 @@
 		<h3 style="margin-top: 30px">UPLOADS</h3>
 	</div>
 </div>
-<div class="row">
-	{% for upload in uploads %}
+
+<section id="record-type-section-1">
+{% for upload in uploads %}
+	{% if upload.record_type.pk == 1 %}
+		<div class="row">
+			<div class="col-9">
+				{{ upload.name }}
+			</div>
+			<div class="col-3 d-flex justify-content-end">
+				<input type="file" name="upload-{{ upload.pk }}">
+			</div>
+		</div>
+	{% endif %}
+{% endfor %}
+</section>
+
+<section id="record-type-section-3" style="display:none">
+{% for upload in uploads %}
+	{% if upload.record_type.pk == 3 %}
+	<div class="row">
 		<div class="col-9">
 			{{ upload.name }}
 		</div>
 		<div class="col-3 d-flex justify-content-end">
 			<input type="file" name="upload-{{ upload.pk }}">
 		</div>
-	{% endfor %}
-</div>
+	</div>
+	{% endif %}
+{% endfor %}
+</section>
+
 <div class="row" style="margin-top:10px;">
 	<div class="col-12 d-flex justify-content-end">
 		<button class="btn btn-prev base-btn base-bg-primary" type="button">Prev</button>

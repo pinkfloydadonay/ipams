@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -22,15 +25,36 @@
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_auto_20201004_2333.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_auto_20201030_1413.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/accounts/migrations/0003_init_accounts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ipams/templates/ipams/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/ipams/templates/ipams/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/data.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/ipams-wireframes-v3.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/notes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/notes_thplbzl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/ipams-wireframes-v3.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/notes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/migrations/0001_initial.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/records/migrations/0002_init_records.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0003_auto_20201005_0819.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0004_recordupload_upload.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/records/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/authors_and_categories.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/authors_and_categories.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/budget.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/budget.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/conference.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/conference.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/publication.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/publication.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/title_and_abstract.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/title_and_abstract.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/uploads.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/uploads.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_approved.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_approved.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_declined.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_declined.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_pending.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_pending.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/record_navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/record_navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,11 +82,12 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/records/templates/records/add_record" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/records/templates/records/view_record" />
     <property name="settings.editor.selected.configurable" value="restructured.text.topic" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/records/templates/records/view_record" />
       <recent name="$PROJECT_DIR$/records/templates/records/add_record" />
       <recent name="$PROJECT_DIR$/records/templates/records/profile" />
       <recent name="D:\Neil\ipams\records\templates\records\profile" />
@@ -101,10 +126,11 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="404" y="221" width="547" height="357" key="#Notifications" timestamp="1601823495456">
-      <screen x="0" y="24" width="1366" height="744" />
+    <state x="404" y="223" width="547" height="357" key="#Notifications" timestamp="1605339348229">
+      <screen x="0" y="27" width="1366" height="741" />
     </state>
     <state x="404" y="221" width="547" height="357" key="#Notifications/0.24.1366.744@0.24.1366.744" timestamp="1601823495456" />
+    <state x="404" y="223" key="#Notifications/0.27.1366.741@0.27.1366.741" timestamp="1605339348229" />
     <state x="117" y="54" width="424" height="491" key="FileChooserDialogImpl" timestamp="1599915330694">
       <screen x="0" y="24" width="1366" height="744" />
     </state>
@@ -119,12 +145,12 @@
       <screen x="0" y="24" width="1366" height="744" />
     </state>
     <state x="297" y="88" width="762" height="623" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.24.1366.744@0.24.1366.744" timestamp="1600329941975" />
-    <state x="346" y="74" width="672" height="695" key="search.everywhere.popup" timestamp="1600760515851">
-      <screen x="0" y="24" width="1366" height="744" />
+    <state x="346" y="77" width="672" height="691" key="search.everywhere.popup" timestamp="1604927383924">
+      <screen x="0" y="27" width="1366" height="741" />
     </state>
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1598487972644" />
     <state x="346" y="52" width="672" height="717" key="search.everywhere.popup/0.0.1366.768@0.0.1366.768" timestamp="1599184242957" />
     <state x="346" y="74" width="672" height="695" key="search.everywhere.popup/0.24.1366.744@0.24.1366.744" timestamp="1600760515851" />
-    <state x="346" y="77" width="672" height="691" key="search.everywhere.popup/0.27.1366.741@0.27.1366.741" timestamp="1598859205459" />
+    <state x="346" y="77" width="672" height="691" key="search.everywhere.popup/0.27.1366.741@0.27.1366.741" timestamp="1604927383924" />
   </component>
 </project>

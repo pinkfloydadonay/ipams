@@ -84,13 +84,5 @@ class CheckedRecordForm(forms.ModelForm):
         fields = ('comment',)
 
 
-class RecordUploadForm(forms.ModelForm):
-    use_required_attribute = False
-
-    class Meta:
-        model = RecordUpload
-        fields = ('upload', 'record', 'file')
-
-
 class AssessmentForm(forms.Form):
     comment = forms.CharField(required=False, label='COMMENTS / RECOMMENDATIONS', widget=forms.Textarea)

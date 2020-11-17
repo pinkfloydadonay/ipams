@@ -13,7 +13,7 @@
 .progressBar li {
     list-style-type: none;
     float: left;
-    width: 16%;
+    width: 13%;
     position: relative;
     text-align: center;
 }
@@ -167,8 +167,15 @@
 				alert("error");
 			}
 		});
+    });
 
-
+    $("#record_type3").on("click", function(){
+   		$("#record-type-section-1").hide();
+   		$("#record-type-section-3").show();
+    });
+    $("#record_type1").on("click", function(){
+   		$("#record-type-section-1").show();
+   		$("#record-type-section-3").hide();
     });
 
 </script>
@@ -182,14 +189,19 @@
 				<a href="{% url 'records-index' %}">Records</a> / Add
 			</div>
 		</div>
+		<form method="post" action="{% url 'records-add' %}" id="form-record" enctype="multipart/form-data">
 		<div class="row">
 			<div class="col-12 d-flex justify-content-end">
-				{{ record_form.record_type|as_crispy_field }}
+				{% for record_type in record_types %}
+				<div class="form-check" style="margin-left:10px;">
+				  <input class="form-check-input" type="radio" name="record_type" id="record_type{{ record_type.pk }}" value="{{ record_type.pk }}" {% if record_type.pk == 1 %} checked {% elif record_type.pk == 2 %} disabled {% endif %}>
+					<label class="form-check-label" for="record_type{{ record_type.pk }}">{{ record_type.name }}</label>
+				</div>
+				{% endfor %}
 			</div>
 		</div>
 		<div class="main-header base-bg-primary"></div>
 		<div class="main-content">
-			<form method="post" action="{% url 'records-add' %}" id="form-record" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div style="display:none">
 					{% include 'records/add_record/navbar.html' %}
@@ -262,8 +274,8 @@
 						</div>
 					</div>
 				</div>
-			</form>
-		</div>
+			</div>
+		</form>
 	</div>
 
 

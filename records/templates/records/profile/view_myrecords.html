@@ -222,8 +222,9 @@
                     <a href="#" id="btn-approve">Approve</a> |
                     <a href="#" id="btn-decline">Decline</a> |
                 {% endif %}
+                    <a href="{% url 'records-edit' record_id=record.pk %}" id="btn-edit">Edit</a>
                 {% if is_removable %}
-                    <a href="#" id="btn-remove">Remove</a>
+                    &nbsp;|&nbsp;<a href="#" id="btn-remove">Remove</a>
                 {% endif %}
             </div>
             <br><b>Adviser:</b> {{ record.adviser.username }}
@@ -243,11 +244,11 @@
     </div>
     <div class="row">
         <div class="col-12 d-flex justify-content-end" style="margin-bottom:20px;">
-            <a {% if research_record.proposal is not none %} href="{% url 'records-myrecords-view' record_id=research_record.proposal.pk %}" {% endif %} style="margin-right:10px">Proposal</a>
+            <a {% if research_record.proposal is not none %} href="{% url 'records-myrecords-view' record_id=research_record.proposal.pk %}" {% endif %}>Proposal</a>&nbsp;|&nbsp;
             {% if research_record.research is not none %}
                 <a href="{% url 'records-myrecords-view' record_id=research_record.research.pk %}">Research</a>
             {% else %}
-                <a href="{% url 'records-add' %}">New Record(Research)</a>
+                <a href="{% url 'records-add-research' research_record_id=research_record.pk %}">New Record(Research)</a>
             {% endif %}
         </div>
     </div>

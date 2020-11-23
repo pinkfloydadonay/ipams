@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import DataError, connection
 from django.db.models import Count, Subquery, F, Q, Sum
+from django.forms import modelformset_factory
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, JsonResponse
@@ -424,16 +425,14 @@ class MyRecordView(View):
                 role_checked=True
             if checked_record.status == 'declined':
                 is_removable = True
-        if UserRecord.objects.filter(user=request.user, record=Record.objects.get(pk=record_id)):
-            is_owner = True
         if adviser_checked['status'] == 'pending' and ktto_checked['status'] == 'pending' and rdco_checked['status'] == 'pending':
             is_removable = True
         self.context['adviser_checked'] = adviser_checked
         self.context['ktto_checked'] = ktto_checked
         self.context['rdco_checked'] = rdco_checked
         self.context['role_checked'] = role_checked
-        self.context['record'] = Record.objects.get(pk=record_id)
-        self.context['is_owner'] = is_owner
+        self.context['record'] = record
+        self.context['research+_record'] = research_record
         self.context['is_removable'] = is_removable
         self.context['research_record'] = research_record
         return render(request, self.name, self.context)
@@ -820,6 +819,253 @@ class Add(View):
                 record.adviser = User.objects.get(pk=adviser[0]['id'])
                 record.save()
                 # if the record type is prposal, the record will also be saved in the research group
+                if record.record_type.pk == 1:
+                    ResearchRecord(proposal=record).save()
+                # patent search files check
+                for upload in Upload.objects.all():
+                    if request.FILES.get(f'upload-{upload.pk}', None):
+                        record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
+                                                     upload=upload).save()
+                for owner in owners:
+                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
+            if record is not None and file_is_valid:
+                publication_form = forms.PublicationForm(request.POST)
+                if publication_form.is_valid():
+                    publication = publication_form.save(commit=False)
+                    publication.record = record
+                    publication.save()
+                author_names = request.POST.getlist('author_names[]', None)
+                author_roles = request.POST.getlist('author_roles[]', None)
+                conference_levels = request.POST.getlist('conference_levels[]', None)
+                conference_titles = request.POST.getlist('conference_titles[]', None)
+                conference_dates = request.POST.getlist('conference_dates[]', None)
+                conference_venues = request.POST.getlist('conference_venues[]', None)
+
+                budget_types = request.POST.getlist('budget_types[]', None)
+                budget_allocations = request.POST.getlist('budget_allocations[]', None)
+                funding_sources = request.POST.getlist('funding_sources[]', None)
+                industries = request.POST.getlist('industries[]', None)
+                institutions = request.POST.getlist('institutions[]', None)
+                collaboration_types = request.POST.getlist('collaboration_types[]', None)
+                for i, author_name in enumerate(author_names):
+                    Author(name=author_name, author_role=AuthorRole.objects.get(pk=author_roles[i]), record=record).save()
+
+                for i, conference_title in enumerate(conference_titles):
+                    Conference(title=conference_title,
+                               conference_level=ConferenceLevel.objects.get(pk=conference_levels[i]),
+                               date=conference_dates[i], venue=conference_venues[i], record=record).save()
+
+                for i, budget_type in enumerate(budget_types):
+                    Budget(budget_type=BudgetType.objects.get(pk=budget_types[i]), budget_allocation=budget_allocations[i],
+                           funding_source=funding_sources[i], record=record).save()
+                for i, collaboration_type in enumerate(collaboration_types):
+                    Collaboration(collaboration_type=CollaborationType.objects.get(pk=collaboration_types[i]),
+                                  industry=industries[i], institution=institutions[i], record=record).save()
+                return redirect('records-index')
+            elif not file_is_valid:
+                error = {'title': 'Unable to save record',
+                         'body': 'The file cannot be more than 5 MB'}
+                error_messages.append(error)
+            else:
+                error = {'title': 'Unable to save record', 'body': 'A record with the same record information already exists'}
+                error_messages.append(error)
+        else:
+            error_messages.append({'title': 'Unable to save record', 'body': 'Some fields contains invalid values while trying to save the record'})
+        context = {
+            'author_roles': self.author_roles,
+            'conference_levels': self.conference_levels,
+            'budget_types': self.budget_types,
+            'collaboration_types': self.collaboration_types,
+            'record_form': self.record_form,
+            'publication_form': self.publication_form,
+            'error_messages': error_messages,
+        }
+        return render(request, self.name, context)
+
+
+class AddResearch(View):
+    name = 'records/add_research.html'
+    author_roles = AuthorRole.objects.all()
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    record_types = RecordType.objects.all()
+    record_form = forms.RecordForm()
+    publication_form = forms.PublicationForm()
+    uploads = Upload.objects.all()
+
+    @method_decorator(authorized_roles(roles=['student', 'adviser', 'ktto', 'rdco']))
+    @method_decorator(login_required(login_url='/'))
+    def get(self, request, research_record_id):
+        proposal_record = ResearchRecord.objects.get(pk=research_record_id).proposal
+        context = {
+            'author_roles': self.author_roles,
+            'conference_levels': self.conference_levels,
+            'budget_types': self.budget_types,
+            'collaboration_types': self.collaboration_types,
+            'record_types': self.record_types,
+            'record_form': self.record_form,
+            'publication_form': self.publication_form,
+            'uploads': self.uploads,
+            'proposal_record': proposal_record,
+            'research_record_id': research_record_id,
+        }
+        return render(request, self.name, context)
+
+    def post(self, request, research_record_id):
+        error_messages = []
+        record_form = forms.RecordForm(request.POST, request.FILES)
+        if request.is_ajax():
+            if request.POST.get("get_user_tags", 'false') == 'true':
+                users = []
+                advisers = []
+                for user in User.objects.all():
+                    users.append({'value': user.username, 'id': user.pk})
+                for user in User.objects.filter(role__in=[3, 4, 5]):
+                    advisers.append({'value': user.username, 'id': user.pk})
+                return JsonResponse({'users': users, 'advisers': advisers})
+        if record_form.is_valid() and not request.is_ajax():
+            record = record_form.save(commit=False)
+            file_is_valid = True
+            file = record_form.cleaned_data.get('abstract_file', False)
+            # check uploaded file size if valid
+            if file and file.size > FILE_LENGTH:
+                file_is_valid = False
+            # saving record to database
+            else:
+                owners = json.loads(request.POST.get('owners-id'))
+                adviser = json.loads(request.POST.get('adviser-id'))
+                record.adviser = User.objects.get(pk=adviser[0]['id'])
+                record.save()
+                research_record = ResearchRecord.objects.get(pk=research_record_id)
+                research_record.research = record
+                research_record.save()
+                # patent search files check
+                for upload in Upload.objects.all():
+                    if request.FILES.get(f'upload-{upload.pk}', None):
+                        record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
+                                                     upload=upload).save()
+                for owner in owners:
+                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
+            if record is not None and file_is_valid:
+                publication_form = forms.PublicationForm(request.POST)
+                if publication_form.is_valid():
+                    publication = publication_form.save(commit=False)
+                    publication.record = record
+                    publication.save()
+                author_names = request.POST.getlist('author_names[]', None)
+                author_roles = request.POST.getlist('author_roles[]', None)
+                conference_levels = request.POST.getlist('conference_levels[]', None)
+                conference_titles = request.POST.getlist('conference_titles[]', None)
+                conference_dates = request.POST.getlist('conference_dates[]', None)
+                conference_venues = request.POST.getlist('conference_venues[]', None)
+
+                budget_types = request.POST.getlist('budget_types[]', None)
+                budget_allocations = request.POST.getlist('budget_allocations[]', None)
+                funding_sources = request.POST.getlist('funding_sources[]', None)
+                industries = request.POST.getlist('industries[]', None)
+                institutions = request.POST.getlist('institutions[]', None)
+                collaboration_types = request.POST.getlist('collaboration_types[]', None)
+                for i, author_name in enumerate(author_names):
+                    Author(name=author_name, author_role=AuthorRole.objects.get(pk=author_roles[i]), record=record).save()
+
+                for i, conference_title in enumerate(conference_titles):
+                    Conference(title=conference_title,
+                               conference_level=ConferenceLevel.objects.get(pk=conference_levels[i]),
+                               date=conference_dates[i], venue=conference_venues[i], record=record).save()
+
+                for i, budget_type in enumerate(budget_types):
+                    Budget(budget_type=BudgetType.objects.get(pk=budget_types[i]), budget_allocation=budget_allocations[i],
+                           funding_source=funding_sources[i], record=record).save()
+                for i, collaboration_type in enumerate(collaboration_types):
+                    Collaboration(collaboration_type=CollaborationType.objects.get(pk=collaboration_types[i]),
+                                  industry=industries[i], institution=institutions[i], record=record).save()
+                return redirect('records-index')
+            elif not file_is_valid:
+                error = {'title': 'Unable to save record',
+                         'body': 'The file cannot be more than 5 MB'}
+                error_messages.append(error)
+            else:
+                error = {'title': 'Unable to save record', 'body': 'A record with the same record information already exists'}
+                error_messages.append(error)
+        else:
+            error_messages.append({'title': 'Unable to save record', 'body': 'Some fields contains invalid values while trying to save the record'})
+        context = {
+            'author_roles': self.author_roles,
+            'conference_levels': self.conference_levels,
+            'budget_types': self.budget_types,
+            'collaboration_types': self.collaboration_types,
+            'record_form': self.record_form,
+            'publication_form': self.publication_form,
+            'error_messages': error_messages,
+        }
+        return render(request, self.name, context)
+
+
+class Edit(View):
+    name = 'records/edit.html'
+    author_roles = AuthorRole.objects.all()
+    conference_levels = ConferenceLevel.objects.all()
+    budget_types = BudgetType.objects.all()
+    collaboration_types = CollaborationType.objects.all()
+    record_types = RecordType.objects.all()
+    record_form = forms.RecordForm()
+    publication_form = forms.PublicationForm()
+    uploads = Upload.objects.all()
+
+    @method_decorator(authorized_roles(roles=['student', 'adviser', 'ktto', 'rdco']))
+    @method_decorator(login_required(login_url='/'))
+    def get(self, request, record_id):
+        record = Record.objects.get(pk=record_id)
+        authors = Author.objects.filter(record=record)
+        conferences = Conference.objects.filter(record=record)
+        budgets = Budget.objects.filter(record=record)
+        collaborations = Collaboration.objects.filter(record=record)
+        record_form = forms.RecordForm(instance=record)
+        publication_form = forms.PublicationForm(instance=Publication.objects.get(record=record))
+        context = {
+            'author_roles': self.author_roles,
+            'conference_levels': self.conference_levels,
+            'budget_types': self.budget_types,
+            'collaboration_types': self.collaboration_types,
+            'record_types': self.record_types,
+            'record_form': record_form,
+            'publication_form': publication_form,
+            'record': record,
+            'authors': authors,
+            'conferences': conferences,
+            'budgets': budgets,
+            'collaborations': collaborations,
+            'uploads': self.uploads,
+        }
+        return render(request, self.name, context)
+
+    def post(self, request, record_id):
+        error_messages = []
+        record_form = forms.RecordForm(request.POST, request.FILES, instance=Record.objects.get(pk=record_id))
+        if request.is_ajax():
+            if request.POST.get("get_user_tags", 'false') == 'true':
+                users = []
+                advisers = []
+                for user in User.objects.all():
+                    users.append({'value': user.username, 'id': user.pk})
+                for user in User.objects.filter(role__in=[3, 4, 5]):
+                    advisers.append({'value': user.username, 'id': user.pk})
+                return JsonResponse({'users': users, 'advisers': advisers})
+        if record_form.is_valid() and not request.is_ajax():
+            record = record_form.save(commit=False)
+            file_is_valid = True
+            file = record_form.cleaned_data.get('abstract_file', False)
+            # check uploaded file size if valid
+            if file and file.size > FILE_LENGTH:
+                file_is_valid = False
+            # saving record to database
+            else:
+                owners = json.loads(request.POST.get('owners-id'))
+                adviser = json.loads(request.POST.get('adviser-id'))
+                record.adviser = User.objects.get(pk=adviser[0]['id'])
+                record.save()
+                # if the record type is proposal, the record will also be saved in the research group
                 if record.record_type.pk == 1:
                     ResearchRecord(proposal=record).save()
                 # patent search files check

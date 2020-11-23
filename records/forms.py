@@ -34,7 +34,7 @@ class PublicationForm(forms.ModelForm):
 
     class Meta:
         model = Publication
-        fields = ('isbn', 'issn', 'isi', 'year_published', 'publication_level')
+        fields = ('isbn', 'issn', 'isi', 'year_published', 'publication_level', 'name',)
 
     def save(self, commit=True):
         m = super(PublicationForm, self).save(commit=False)

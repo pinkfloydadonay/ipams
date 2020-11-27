@@ -23,17 +23,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/authors_and_categories.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/budget.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/collaboration.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/conference.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/navbar.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/publication.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/title_and_abstract.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/records/templates/records/edit_record/uploads.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ipams/templates/ipams/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/ipams/templates/ipams/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/edit.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_approved.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_approved.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_declined.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_declined.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_pending.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_pending.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/view_record/uploads_title.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view_record/uploads_title.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/records/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/views.py" afterDir="false" />
     </list>

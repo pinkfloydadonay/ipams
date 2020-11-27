@@ -148,6 +148,42 @@ class Home(View):
             return JsonResponse({"data": data})
 
 
+class Dashboard(View):
+    name = 'records/dashboard.html'
+
+    @method_decorator(login_required(login_url='/'))
+    @method_decorator(authorized_roles(roles=['ktto', 'rdco']))
+    def get(self, request):
+        return render(request, self.name)
+
+    def post(self, request):
+        if request.is_ajax():
+            checked_records = CheckedRecord.objects.filter(status='approved', checked_by__in=Subquery(User.objects.filter(role=5).values('pk')))
+            records = Record.objects.filter(pk__in=Subquery(checked_records.values('record_id')))
+            # graphs
+            if request.POST.get('graphs'):
+                basic_count = records.filter(classification=1).count()
+                applied_count = records.filter(classification=2).count()
+                psced_count = []
+                records_per_year_count = []
+                psced_per_year_count = []
+                psced_classifications = PSCEDClassification.objects.all()
+                records_per_year = records.values('year_accomplished').annotate(year_count=Count('year_accomplished')).order_by('year_accomplished')[:10]
+                for psced in psced_classifications:
+                    psced_count.append({'name': psced.name, 'count': records.filter(
+                        psced_classification=PSCEDClassification.objects.get(pk=psced.id)).count()})
+                for record_per_year in records_per_year:
+                    records_per_year_count.append({'year': record_per_year['year_accomplished'], 'count': record_per_year['year_count']})
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT year_accomplished, COUNT(year_accomplished) AS year_count FROM (SELECT DISTINCT year_accomplished, psced_classification_id FROM (select year_accomplished, psced_classification_id from records_record inner join records_checkedrecord on records_record.id=record_id inner join accounts_user on records_checkedrecord.checked_by_id=accounts_user.id where accounts_user.role_id=5 and records_checkedrecord.status='approved') as recordtbl) as tbl GROUP BY year_accomplished")
+                    rows = cursor.fetchall()
+                    for row in rows:
+                        psced_per_year_count.append({'year': row[0], 'psced_count': row[1]})
+                return JsonResponse({'success': True, 'basic': basic_count, 'applied': applied_count,
+                                     'psced_count': psced_count, 'records_per_year_count': records_per_year_count,
+                                     'psced_per_year_count': psced_per_year_count})
+
+
 class ViewRecord(View):
     name = 'records/view.html'
     author_roles = AuthorRole.objects.all()
@@ -207,12 +243,10 @@ class ViewRecord(View):
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
                 checked_uploads = CheckedUpload.objects.filter(record_upload=record_upload).order_by('-date_checked')
                 comments = []
-                statuses = []
                 checked_bys = []
                 checked_dates = []
                 for checked_upload in checked_uploads:
                     comments.append(checked_upload.comment)
-                    statuses.append(checked_upload.status.name)
                     checked_bys.append(checked_upload.checked_by.username)
                     checked_dates.append(checked_upload.date_checked)
                 if record_upload is None:
@@ -223,7 +257,6 @@ class ViewRecord(View):
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
-                                         'statuses': statuses,
                                          'checked_bys': checked_bys,
                                          'checked_dates': checked_dates,
                                          'record-upload-id': record_upload.pk})
@@ -231,11 +264,9 @@ class ViewRecord(View):
             elif request.POST.get('post_comment', 'false') == 'true':
                 upload = Upload.objects.get(pk=request.POST.get('upload_id', 0))
                 record = Record.objects.get(pk=request.POST.get('record_id', 0))
-                checked_status_upload_type = CheckedUploadsStatusType.objects.get(
-                    pk=request.POST.get('uploads_status_type', 0))
                 comment = request.POST.get('comment', '')
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
-                CheckedUpload(status=checked_status_upload_type, comment=comment, checked_by=request.user,
+                CheckedUpload(comment=comment, checked_by=request.user,
                               record_upload=record_upload).save()
                 return JsonResponse({'success': True})
             else:
@@ -328,12 +359,10 @@ class PendingRecordView(View):
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
                 checked_uploads = CheckedUpload.objects.filter(record_upload=record_upload).order_by('-date_checked')
                 comments = []
-                statuses = []
                 checked_bys = []
                 checked_dates = []
                 for checked_upload in checked_uploads:
                     comments.append(checked_upload.comment)
-                    statuses.append(checked_upload.status.name)
                     checked_bys.append(checked_upload.checked_by.username)
                     checked_dates.append(checked_upload.date_checked)
                 if record_upload is None:
@@ -344,7 +373,6 @@ class PendingRecordView(View):
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
-                                         'statuses': statuses,
                                          'checked_bys': checked_bys,
                                          'checked_dates': checked_dates,
                                          'record-upload-id': record_upload.pk})
@@ -352,11 +380,9 @@ class PendingRecordView(View):
             elif request.POST.get('post_comment', 'false') == 'true':
                 upload = Upload.objects.get(pk=request.POST.get('upload_id', 0))
                 record = Record.objects.get(pk=request.POST.get('record_id', 0))
-                checked_status_upload_type = CheckedUploadsStatusType.objects.get(
-                    pk=request.POST.get('uploads_status_type', 0))
                 comment = request.POST.get('comment', '')
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
-                CheckedUpload(status=checked_status_upload_type, comment=comment, checked_by=request.user,
+                CheckedUpload(comment=comment, checked_by=request.user,
                               record_upload=record_upload).save()
                 return JsonResponse({'success': True})
             else:
@@ -468,12 +494,10 @@ class MyRecordView(View):
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
                 checked_uploads = CheckedUpload.objects.filter(record_upload=record_upload).order_by('-date_checked')
                 comments = []
-                statuses = []
                 checked_bys = []
                 checked_dates = []
                 for checked_upload in checked_uploads:
                     comments.append(checked_upload.comment)
-                    statuses.append(checked_upload.status.name)
                     checked_bys.append(checked_upload.checked_by.username)
                     checked_dates.append(checked_upload.date_checked)
                 if record_upload is None:
@@ -484,7 +508,6 @@ class MyRecordView(View):
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
-                                         'statuses': statuses,
                                          'checked_bys': checked_bys,
                                          'checked_dates': checked_dates,
                                          'record-upload-id': record_upload.pk})
@@ -492,10 +515,9 @@ class MyRecordView(View):
             elif request.POST.get('post_comment', 'false') == 'true':
                 upload = Upload.objects.get(pk=request.POST.get('upload_id', 0))
                 record = Record.objects.get(pk=request.POST.get('record_id', 0))
-                checked_status_upload_type = CheckedUploadsStatusType.objects.get(pk=request.POST.get('uploads_status_type', 0))
                 comment = request.POST.get('comment', '')
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
-                CheckedUpload(status=checked_status_upload_type, comment=comment, checked_by=request.user, record_upload=record_upload).save()
+                CheckedUpload(comment=comment, checked_by=request.user, record_upload=record_upload).save()
                 return JsonResponse({'success': True})
             else:
                 return JsonResponse({'success': False})
@@ -600,12 +622,10 @@ class ApprovedRecordView(View):
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
                 checked_uploads = CheckedUpload.objects.filter(record_upload=record_upload).order_by('-date_checked')
                 comments = []
-                statuses = []
                 checked_bys = []
                 checked_dates = []
                 for checked_upload in checked_uploads:
                     comments.append(checked_upload.comment)
-                    statuses.append(checked_upload.status.name)
                     checked_bys.append(checked_upload.checked_by.username)
                     checked_dates.append(checked_upload.date_checked)
                 if record_upload is None:
@@ -616,7 +636,6 @@ class ApprovedRecordView(View):
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
-                                         'statuses': statuses,
                                          'checked_bys': checked_bys,
                                          'checked_dates': checked_dates,
                                          'record-upload-id': record_upload.pk})
@@ -624,11 +643,9 @@ class ApprovedRecordView(View):
             elif request.POST.get('post_comment', 'false') == 'true':
                 upload = Upload.objects.get(pk=request.POST.get('upload_id', 0))
                 record = Record.objects.get(pk=request.POST.get('record_id', 0))
-                checked_status_upload_type = CheckedUploadsStatusType.objects.get(
-                    pk=request.POST.get('uploads_status_type', 0))
                 comment = request.POST.get('comment', '')
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
-                CheckedUpload(status=checked_status_upload_type, comment=comment, checked_by=request.user,
+                CheckedUpload(comment=comment, checked_by=request.user,
                               record_upload=record_upload).save()
                 return JsonResponse({'success': True})
             else:
@@ -719,12 +736,10 @@ class DeclinedRecordView(View):
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
                 checked_uploads = CheckedUpload.objects.filter(record_upload=record_upload).order_by('-date_checked')
                 comments = []
-                statuses = []
                 checked_bys = []
                 checked_dates = []
                 for checked_upload in checked_uploads:
                     comments.append(checked_upload.comment)
-                    statuses.append(checked_upload.status.name)
                     checked_bys.append(checked_upload.checked_by.username)
                     checked_dates.append(checked_upload.date_checked)
                 if record_upload is None:
@@ -735,7 +750,6 @@ class DeclinedRecordView(View):
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
-                                         'statuses': statuses,
                                          'checked_bys': checked_bys,
                                          'checked_dates': checked_dates,
                                          'record-upload-id': record_upload.pk})
@@ -743,11 +757,9 @@ class DeclinedRecordView(View):
             elif request.POST.get('post_comment', 'false') == 'true':
                 upload = Upload.objects.get(pk=request.POST.get('upload_id', 0))
                 record = Record.objects.get(pk=request.POST.get('record_id', 0))
-                checked_status_upload_type = CheckedUploadsStatusType.objects.get(
-                    pk=request.POST.get('uploads_status_type', 0))
                 comment = request.POST.get('comment', '')
                 record_upload = RecordUpload.objects.filter(upload=upload, record=record).first()
-                CheckedUpload(status=checked_status_upload_type, comment=comment, checked_by=request.user,
+                CheckedUpload(comment=comment, checked_by=request.user,
                               record_upload=record_upload).save()
                 return JsonResponse({'success': True})
             else:

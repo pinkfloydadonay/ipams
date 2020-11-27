@@ -243,6 +243,9 @@
                             {% if user.is_authenticated %}
                             <label class="dropdown-item disabled">{{ user.username }}</label>
                             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profile-modal">Profile Settings</a>
+                            {% if user.role.id > 3 %}
+                            <a class="dropdown-item" href="{% url 'records-dashboard' %}">Dashboard</a>
+                            {% endif %}
                             {% if user.role.id > 1 %}
                             <div class="dropdown-divider"></div>
                             <h6 class="dropdown-header"><i class="fa fa-book"></i> Records</h6>

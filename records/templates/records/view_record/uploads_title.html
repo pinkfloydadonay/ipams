@@ -10,16 +10,14 @@
         <div id="doc-comments" class="form-group" style="margin-top:15px; margin-bottom:15px">
         </div>
         <div id="doc-status">
-            <select class="custom-select mr-sm-2" id="uploads-status-type" name="uploads-status-type">
-                {% for type in checked_uploads_status_types %}
-                    <option value="{{ type.pk }}">{{ type.name }}</option>
-                {% endfor %}
-            </select>
+
+
+            <div class="d-flex justify-content-end" style="margin-top:10px">
+                <button type="button" class="btn base-btn base-bg-primary" id="btn-uploads-post">Post</button>
+            </div>
         </div>
 
-        <div class="d-flex justify-content-end" style="margin-top:10px">
-            <button type="button" class="btn base-btn base-bg-primary" id="btn-uploads-post">Post</button>
-        </div>
+
         {% endif %}
     </div>
 </div>

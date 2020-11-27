@@ -162,7 +162,6 @@ class CheckedUploadsStatusType(models.Model):
 
 
 class CheckedUpload(models.Model):
-    status = models.ForeignKey(CheckedUploadsStatusType, on_delete=models.CASCADE)
     comment = models.TextField()
     checked_by = models.ForeignKey('accounts.User', on_delete=models.DO_NOTHING)
     record_upload = models.ForeignKey(RecordUpload, on_delete=models.CASCADE)

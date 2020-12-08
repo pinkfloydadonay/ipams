@@ -25,24 +25,7 @@
 	</div>
 </div>
 <div id="budget-rows" style="margin-bottom:10px;">
-	<div class="row" id="budget-1">
-		<div class="col-2">
-			<select name="budget_types[]" class="form-control">
-				{% for budget_type in budget_types %}
-					<option value="{{ budget_type.pk }}">{{ budget_type.name }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<div class="col-4">
-			<input type="number" name="budget_allocations[]" placeholder="Budget Allocation" class="form-control" required>
-		</div>
-		<div class="col-4">
-			<input type="text" name="funding_sources[]" placeholder="Funding Source" class="form-control" required>
-		</div>
-		<div class="col-2">
-			<button class="btn btn-danger" type="button" onclick="removeBudget(1)">REMOVE</button>
-		</div>
-	</div>
+
 </div>
 <div class="row">
 	<div class="col-12 d-flex justify-content-end">

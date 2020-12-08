@@ -233,7 +233,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12 d-flex justify-content-end">
+        <div class="col-6">
+            <h4>{{ record.record_type.name }}</h4>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
             <div id="doc-tags" style="margin-top:10px">
                 <div class="form-check form-check-inline">
                     <input type="checkbox" class="form-check-input" id="ip" {% if user.role.pk < 3 %} disabled {% endif %}{% if record.is_ip %} checked {% endif %}>

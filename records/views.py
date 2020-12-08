@@ -11,11 +11,11 @@ from django.views import View
 from django.http import HttpResponse, JsonResponse
 
 from accounts.decorators import authorized_roles, authorized_record_user
-from accounts.models import User, UserRole, UserRecord
+from accounts.models import User, UserRole, UserRecord, RoleRequest
 from .forms import AssessmentForm, CheckedRecordForm
 from .models import Record, AuthorRole, Classification, PSCEDClassification, ConferenceLevel, BudgetType, \
     CollaborationType, Author, Conference, PublicationLevel, Publication, Budget, Collaboration, CheckedRecord, Upload, \
-    RecordUpload, RecordType, ResearchRecord, CheckedUpload, CheckedUploadsStatusType
+    RecordUpload, RecordType, ResearchRecord, CheckedUpload, RecordUploadStatus
 from django.shortcuts import redirect
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
@@ -134,6 +134,7 @@ class Home(View):
                     user = User.objects.get(pk=int(account_id))
                     user.role = UserRole.objects.get(pk=role_id)
                     user.save()
+                    RoleRequest.objects.filter(user=user).delete()
             # setting datatable records
             for record in records:
                 data.append([
@@ -184,6 +185,37 @@ class Dashboard(View):
                                      'psced_per_year_count': psced_per_year_count})
 
 
+class ViewManageDocuments(View):
+    name = 'records/manage_documents.html'
+    record_uploads = RecordUpload.objects.all()
+    record_upload_status = RecordUploadStatus.objects.all()
+    context = {
+        'record_uploads': record_uploads,
+        'record_upload_status': record_upload_status,
+    }
+
+    def get(self, request):
+        return render(request, self.name, self.context)
+
+    def post(self, request):
+        if request.is_ajax():
+            if request.POST.get('status_change', False) == 'true':
+                record_upload = RecordUpload.objects.get(pk=int(request.POST.get('record_upload_id', 0)))
+                record_upload.record_upload_status = RecordUploadStatus.objects.get(pk=request.POST.get('status', 0))
+                record_upload.save()
+                return JsonResponse({'success': True})
+            else:
+                data = []
+                record_uploads = RecordUpload.objects.all()
+                for record_upload in record_uploads:
+                    data.append([record_upload.pk,
+                                 record_upload.record.title,
+                                 record_upload.upload.name,
+                                 f'{record_upload.record_upload_status.name} <button type="button" onclick="onStatusChangeClick({record_upload.pk});">Change</button>',
+                                 f'<a href="/download/document/{record_upload.pk}">Download</a>'],)
+                return JsonResponse({"data": data})
+
+
 class ViewRecord(View):
     name = 'records/view.html'
     author_roles = AuthorRole.objects.all()
@@ -193,7 +225,7 @@ class ViewRecord(View):
     budget_types = BudgetType.objects.all()
     collaboration_types = CollaborationType.objects.all()
     publication_levels = PublicationLevel.objects.all()
-    checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
+    # checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
     uploads = Upload.objects.all()
     checked_record_form = CheckedRecordForm()
     context = {
@@ -204,7 +236,7 @@ class ViewRecord(View):
         'budget_types': budget_types,
         'collaboration_types': collaboration_types,
         'publication_levels': publication_levels,
-        'checked_uploads_status_types': checked_uploads_status_types,
+        # 'checked_uploads_status_types': checked_uploads_status_types,
         'uploads': uploads,
         'checked_record_form': checked_record_form,
     }
@@ -254,6 +286,7 @@ class ViewRecord(View):
                 else:
                     return JsonResponse({'success': True,
                                          'doc-title': record_upload.upload.name,
+                                         'doc-status': record_upload.record_upload_status.name,
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
@@ -282,7 +315,7 @@ class PendingRecordView(View):
     budget_types = BudgetType.objects.all()
     collaboration_types = CollaborationType.objects.all()
     publication_levels = PublicationLevel.objects.all()
-    checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
+    # checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
     uploads = Upload.objects.all()
     checked_record_form = CheckedRecordForm()
     context = {
@@ -293,7 +326,7 @@ class PendingRecordView(View):
         'budget_types': budget_types,
         'collaboration_types': collaboration_types,
         'publication_levels': publication_levels,
-        'checked_uploads_status_types': checked_uploads_status_types,
+        # 'checked_uploads_status_types': checked_uploads_status_types,
         'uploads': uploads,
         'checked_record_form': checked_record_form,
     }
@@ -411,7 +444,7 @@ class MyRecordView(View):
     budget_types = BudgetType.objects.all()
     collaboration_types = CollaborationType.objects.all()
     publication_levels = PublicationLevel.objects.all()
-    checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
+    # checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
     uploads = Upload.objects.all()
     checked_record_form = CheckedRecordForm()
     context = {
@@ -422,7 +455,7 @@ class MyRecordView(View):
         'budget_types': budget_types,
         'collaboration_types': collaboration_types,
         'publication_levels': publication_levels,
-        'checked_uploads_status_types': checked_uploads_status_types,
+        # 'checked_uploads_status_types': checked_uploads_status_types,
         'uploads': uploads,
         'checked_record_form': checked_record_form,
     }
@@ -458,7 +491,6 @@ class MyRecordView(View):
         self.context['rdco_checked'] = rdco_checked
         self.context['role_checked'] = role_checked
         self.context['record'] = record
-        self.context['research+_record'] = research_record
         self.context['is_removable'] = is_removable
         self.context['research_record'] = research_record
         return render(request, self.name, self.context)
@@ -505,6 +537,7 @@ class MyRecordView(View):
                 else:
                     return JsonResponse({'success': True,
                                          'doc-title': record_upload.upload.name,
+                                         'doc-status': record_upload.record_upload_status.name,
                                          'is-ip': record_upload.is_ip,
                                          'for-commercialization': record_upload.for_commercialization,
                                          'comments': comments,
@@ -545,7 +578,7 @@ class ApprovedRecordView(View):
     budget_types = BudgetType.objects.all()
     collaboration_types = CollaborationType.objects.all()
     publication_levels = PublicationLevel.objects.all()
-    checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
+    # checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
     uploads = Upload.objects.all()
     checked_record_form = CheckedRecordForm()
     context = {
@@ -556,7 +589,7 @@ class ApprovedRecordView(View):
         'budget_types': budget_types,
         'collaboration_types': collaboration_types,
         'publication_levels': publication_levels,
-        'checked_uploads_status_types': checked_uploads_status_types,
+        # 'checked_uploads_status_types': checked_uploads_status_types,
         'uploads': uploads,
         'checked_record_form': checked_record_form,
     }
@@ -674,7 +707,7 @@ class DeclinedRecordView(View):
     budget_types = BudgetType.objects.all()
     collaboration_types = CollaborationType.objects.all()
     publication_levels = PublicationLevel.objects.all()
-    checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
+    # checked_uploads_status_types = CheckedUploadsStatusType.objects.all()
     uploads = Upload.objects.all()
     checked_record_form = CheckedRecordForm()
     context = {
@@ -685,7 +718,7 @@ class DeclinedRecordView(View):
         'budget_types': budget_types,
         'collaboration_types': collaboration_types,
         'publication_levels': publication_levels,
-        'checked_uploads_status_types': checked_uploads_status_types,
+        # 'checked_uploads_status_types': checked_uploads_status_types,
         'uploads': uploads,
         'checked_record_form': checked_record_form,
     }
@@ -830,14 +863,14 @@ class Add(View):
                 adviser = json.loads(request.POST.get('adviser-id'))
                 record.adviser = User.objects.get(pk=adviser[0]['id'])
                 record.save()
-                # if the record type is prposal, the record will also be saved in the research group
+                # if the record type is proposal, the record will also be saved in the research group
                 if record.record_type.pk == 1:
                     ResearchRecord(proposal=record).save()
                 # patent search files check
                 for upload in Upload.objects.all():
                     if request.FILES.get(f'upload-{upload.pk}', None):
                         record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
-                                                     upload=upload).save()
+                                                     upload=upload, record_upload_status=RecordUploadStatus.objects.get(pk=1)).save()
                 for owner in owners:
                     UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
             if record is not None and file_is_valid:
@@ -882,7 +915,7 @@ class Add(View):
                 error = {'title': 'Unable to save record', 'body': 'A record with the same record information already exists'}
                 error_messages.append(error)
         else:
-            error_messages.append({'title': 'Unable to save record', 'body': 'Some fields contains invalid values while trying to save the record'})
+            error_messages.append({'title': 'Unable to save record', 'body': 'You must fill-in all the required fields'})
         context = {
             'author_roles': self.author_roles,
             'conference_levels': self.conference_levels,
@@ -1035,6 +1068,7 @@ class Edit(View):
         collaborations = Collaboration.objects.filter(record=record)
         record_form = forms.RecordForm(instance=record)
         publication_form = forms.PublicationForm(instance=Publication.objects.get(record=record))
+        publication_name = Publication.objects.get(record=record).name
         context = {
             'author_roles': self.author_roles,
             'conference_levels': self.conference_levels,
@@ -1043,6 +1077,7 @@ class Edit(View):
             'record_types': self.record_types,
             'record_form': record_form,
             'publication_form': publication_form,
+            'publication_name': publication_name,
             'record': record,
             'authors': authors,
             'conferences': conferences,
@@ -1054,18 +1089,19 @@ class Edit(View):
 
     def post(self, request, record_id):
         error_messages = []
+        record_instance = Record.objects.get(pk=record_id)
         record_form = forms.RecordForm(request.POST, request.FILES, instance=Record.objects.get(pk=record_id))
         if request.is_ajax():
             if request.POST.get("get_user_tags", 'false') == 'true':
                 users = []
-                advisers = []
                 for user in User.objects.all():
                     users.append({'value': user.username, 'id': user.pk})
-                for user in User.objects.filter(role__in=[3, 4, 5]):
-                    advisers.append({'value': user.username, 'id': user.pk})
-                return JsonResponse({'users': users, 'advisers': advisers})
+                return JsonResponse({'users': users})
         if record_form.is_valid() and not request.is_ajax():
             record = record_form.save(commit=False)
+            if record is None:
+                record = record_instance
+            record.record_type = record_instance.record_type
             file_is_valid = True
             file = record_form.cleaned_data.get('abstract_file', False)
             # check uploaded file size if valid
@@ -1073,22 +1109,19 @@ class Edit(View):
                 file_is_valid = False
             # saving record to database
             else:
-                owners = json.loads(request.POST.get('owners-id'))
-                adviser = json.loads(request.POST.get('adviser-id'))
-                record.adviser = User.objects.get(pk=adviser[0]['id'])
                 record.save()
-                # if the record type is proposal, the record will also be saved in the research group
-                if record.record_type.pk == 1:
-                    ResearchRecord(proposal=record).save()
                 # patent search files check
                 for upload in Upload.objects.all():
                     if request.FILES.get(f'upload-{upload.pk}', None):
-                        record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
-                                                     upload=upload).save()
-                for owner in owners:
-                    UserRecord(user=User.objects.get(pk=int(owner['id'])), record=record).save()
+                        record_upload = RecordUpload.objects.filter(record=record, upload=upload).first()
+                        if record_upload is not None:
+                            record_upload.file = request.FILES.get(f'upload-{upload.pk}', None)
+                            record_upload.save()
+                        else:
+                            record_upload = RecordUpload(file=request.FILES.get(f'upload-{upload.pk}', None), record=record,
+                                                     upload=upload, record_upload_status=RecordUploadStatus.objects.get(pk=1)).save()
             if record is not None and file_is_valid:
-                publication_form = forms.PublicationForm(request.POST)
+                publication_form = forms.PublicationForm(request.POST, instance=Publication.objects.get(record=record))
                 if publication_form.is_valid():
                     publication = publication_form.save(commit=False)
                     publication.record = record
@@ -1106,17 +1139,22 @@ class Edit(View):
                 industries = request.POST.getlist('industries[]', None)
                 institutions = request.POST.getlist('institutions[]', None)
                 collaboration_types = request.POST.getlist('collaboration_types[]', None)
+
+                Author.objects.filter(record=record).delete()
                 for i, author_name in enumerate(author_names):
                     Author(name=author_name, author_role=AuthorRole.objects.get(pk=author_roles[i]), record=record).save()
 
+                Conference.objects.filter(record=record).delete()
                 for i, conference_title in enumerate(conference_titles):
                     Conference(title=conference_title,
                                conference_level=ConferenceLevel.objects.get(pk=conference_levels[i]),
                                date=conference_dates[i], venue=conference_venues[i], record=record).save()
 
+                Budget.objects.filter(record=record).delete()
                 for i, budget_type in enumerate(budget_types):
                     Budget(budget_type=BudgetType.objects.get(pk=budget_types[i]), budget_allocation=budget_allocations[i],
                            funding_source=funding_sources[i], record=record).save()
+                Collaboration.objects.filter(record=record).delete()
                 for i, collaboration_type in enumerate(collaboration_types):
                     Collaboration(collaboration_type=CollaborationType.objects.get(pk=collaboration_types[i]),
                                   industry=industries[i], institution=institutions[i], record=record).save()
@@ -1209,6 +1247,8 @@ class ParseExcel(View):
                         Publication(name=publication_name, isbn=isbn, issn=issn, isi=isi,
                                     publication_level=PublicationLevel.objects.get(pk=publication_level),
                                     year_published=year_published, record=record).save()
+                    else:
+                        Publication(record=record).save()
                     if d[25]:
                         budget_type = 1
                         budget_allocation = d[30]

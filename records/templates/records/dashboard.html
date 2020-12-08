@@ -148,33 +148,90 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <section id="home-graphs" class="main-content">
+<div class="container-fluid" style="background-color:#dbdbdb;">
+    <section>
         <div class="row">
-            <div class="col-6 d-flex justify-content-end">
-                <div>
+            <div class="col-sm-6">
+                <h2 style="margin-top:20px; margin-bottom:20px;">Dashboard</h2>
+                <a>Manage Records</a> |
+                <a href="{% url 'records-manage-documents' %}">Manage Documents</a>
+            </div>
+            <div class="col-sm-6 d-flex justify-content-end">
+                <div style="margin-top:20px; margin-bottom:20px;">
                     <a id="btn-graph-refresh" class="btn btn-secondary base-btn base-bg-primary"><i class="fa fa-sync fa-md"></i></a>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div style="overflow-x:auto" class="col-sm-12 col-lg-12">
+            <div class="col-sm-12 col-lg-12">
                 <div class="row">
-                    <div class="col-sm-12 col-lg-6 container active animate__animated animate__fadeIn animate__faster" id="home">
-                        <canvas id="appliedVsBasic"></canvas>
+                    <div class="col-sm-12 col-lg-6 container active animate__animated animate__fadeIn animate__faster" id="home" style=" padding:5px 5px 5px 5px;">
+                        <canvas id="appliedVsBasic" style="background-color:white;"></canvas>
                     </div>
-                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" id="menu1">
-                        <canvas id="recordsPerYear"></canvas>
+                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" id="menu1" style=" padding:5px 5px 5px 5px;">
+                        <canvas id="recordsPerYear" style="background-color:white;"></canvas>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" id="menu2">
-                        <canvas id="classificationPerYear"></canvas>
+                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" id="menu2" style=" padding:5px 5px 5px 5px;">
+                        <canvas id="classificationPerYear" style="background-color:white;"></canvas>
                     </div>
-                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" id="menu3">
-                        <canvas id="noOfClassifications"></canvas>
+                    <div class="col-sm-12 col-lg-6 container animate__animated animate__fadeIn animate__faster" style="padding:5px 5px 5px 5px;">
+                        <div style="background-color:white;">
+                            <table class="table table-striped">
+                                <thead style="font-size:12px;">
+                                    <tr>
+                                        <th></th>
+                                        <th>For Application</th>
+                                        <th>Reviewed</th>
+                                        <th>Filed</th>
+                                        <th>Approved</th>
+                                        <th>Disapproved</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size:12px;">
+                                    <tr>
+                                        <th>Patent</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Utility Model</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Industrial Design</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Trademark</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Copyright</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div style="border-bottom: 2px solid black; padding:5px 5px 0px 5px">Pending</div>
+                            <div class="row" style="padding: 0px 5px 0px 5px;">
+                                <div class="col">
+                                    Adviser
+                                </div>
+                                <div class="col">
+                                    KTTO
+                                </div>
+                                <div class="col">
+                                    RDCO
+                                </div>
+                            </div>
+                            <div class="row" style="padding: 0px 5px 0px 5px;">
+                                <div class="col">0</div>
+                                <div class="col">0</div>
+                                <div class="col">0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-lg-12 container animate__animated animate__fadeIn animate__faster" id="menu3" style=" padding:5px 5px 5px 5px;">
+                <canvas id="noOfClassifications" style="background-color:white;"></canvas>
             </div>
         </div>
     </section>

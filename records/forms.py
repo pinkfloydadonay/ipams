@@ -17,7 +17,8 @@ class RecordForm(forms.ModelForm):
         year_accomplished = self.cleaned_data.get('year_accomplished')
         classification = self.cleaned_data.get('classification')
         psced_classification = self.cleaned_data.get('psced_classification')
-        record_len = len(Record.objects.filter(title=title, year_accomplished=year_accomplished,
+        abstract = self.cleaned_data.get('abstract')
+        record_len = len(Record.objects.filter(title=title, year_accomplished=year_accomplished, abstract=abstract,
                                                classification=classification,
                                                psced_classification=psced_classification))
         if record_len == 0:
@@ -34,7 +35,7 @@ class PublicationForm(forms.ModelForm):
 
     class Meta:
         model = Publication
-        fields = ('isbn', 'issn', 'isi', 'year_published', 'publication_level', 'name',)
+        fields = ('isbn', 'issn', 'isi', 'year_published', 'publication_level',)
 
     def save(self, commit=True):
         m = super(PublicationForm, self).save(commit=False)

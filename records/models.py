@@ -147,18 +147,22 @@ class Upload(models.Model):
         return self.name
 
 
+class RecordUploadStatus(models.Model):
+    name = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
 class RecordUpload(models.Model):
     file = models.FileField(upload_to='documents/', null=True, blank=True)
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     record = models.ForeignKey(Record, on_delete=models.CASCADE)
+    record_upload_status = models.ForeignKey(RecordUploadStatus, on_delete=models.CASCADE)
     is_ip = models.BooleanField(default=False)
     for_commercialization = models.BooleanField(default=False)
     date_uploaded = models.DateTimeField(auto_now_add=True)
-
-
-class CheckedUploadsStatusType(models.Model):
-    name = models.CharField(max_length=100)
-    date_created = models.DateTimeField(auto_now_add=True)
 
 
 class CheckedUpload(models.Model):

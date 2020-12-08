@@ -67,10 +67,10 @@
 
 {% block footer %}
 	<script>
-		var authorCount = 1;
-		var conferenceCount = 1;
-		var budgetCount = 1;
-		var collaborationCount = 1;
+		var authorCount = 0;
+		var conferenceCount = 0;
+		var budgetCount = 0;
+		var collaborationCount = 0;
 
 		function removeAuthor(id=0){
 			authorCount--;
@@ -113,7 +113,15 @@
 		});
 
 		$("#btn-record-submit").on("click",function(){
-			$("#form-record").submit();
+			var valid = false;
+			year_max = new Date().getFullYear()+1;
+			year_accomplished = parseInt($("#id_year_accomplished").val(), 10);
+			if(year_accomplished>0 && year_accomplished<=year_max)
+				valid = true;
+			if(valid)
+				$("#form-record").submit();
+			else
+				alert("Unable to save this record, check that all fields are valid values");
 		});
 
 		$(document).ready(function(){

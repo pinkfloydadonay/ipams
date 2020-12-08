@@ -20,7 +20,7 @@ all_models = [
     models.PublicationLevel,
     models.Upload,
     models.RecordUpload,
-    models.CheckedUploadsStatusType,
+    models.RecordUploadStatus,
     models.CheckedUpload,
 ]
 admin.site.register(all_models)

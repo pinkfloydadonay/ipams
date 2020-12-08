@@ -38,6 +38,7 @@ class UserRole(models.Model):
 class User(AbstractBaseUser, PermissionsMixin):
 	username = models.CharField(max_length=30, unique=True)
 	first_name = models.CharField(max_length=50, blank=True)
+	middle_name = models.CharField(max_length=50, blank=True)
 	last_name = models.CharField(max_length=50, blank=True)
 	email = models.CharField(max_length=30, unique=True)
 	contact_no = models.CharField(max_length=20, blank=True)
@@ -50,6 +51,18 @@ class User(AbstractBaseUser, PermissionsMixin):
 	REQUIRED_FIELDS = ['email']
 
 
+class RoleRequest(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	role = models.ForeignKey(UserRole, on_delete=models.CASCADE)
+	date_requested = models.DateTimeField(auto_now_add=True)
+
+
 class UserRecord(models.Model):
 	record = models.ForeignKey(Record, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Log(models.Model):
+	user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+	action = models.CharField(max_length=100)
+	date_created = models.DateTimeField(auto_now_add=True)

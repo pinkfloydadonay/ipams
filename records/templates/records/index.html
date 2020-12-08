@@ -199,147 +199,7 @@
 				})
 			}
 		});
-//---------------------------------Graphs---------------------------------------------
-		function initGraphs(){
-			var appliedVsBasic;
-			var noOfClassifications;
-			var recordsPerYear;
-			var classificationPerYear;
-			$.ajax({
-			    "headers": { "X-CSRFToken": '{{ csrf_token }}' },
-			    "url": "{% url 'records-index' %}",
-			    "type": "post",
-			    "data": {"graphs": true},
-			    "success": function(response){
-			//-------------------------applied vs. basic------------------------------------
-			    	data = [response.basic, response.applied];
-			    	appliedVsBasic = new Chart(document.getElementById('appliedVsBasic').getContext('2d'),
-					{
-					    type: 'pie',
-					    data: {
-					        labels: ['Applied', 'Basic'],
-					        datasets: [{
-					            data: data,
-					            backgroundColor: [
-					                'rgba(128, 0, 0)',
-					                '#ffd700',
-					            ],
-					            borderColor: [
-					            	'#ffffff',
-					                '#ffffff',
-					            ],
-					            borderWidth: 1
-					        }]
-					    },
-					    options: {
-					    	title: {
-					    	  display: true,
-					    	  text: 'Applied vs Basic'
-					    	},
 
-					        legend: {
-					        	display: true
-					        }
-					    }
-					});
-			//------------------------------------No. of Classification-------------------------------------
-					var psced_names = [];
-					var psced_count = [];
-					psced = response.psced_count;
-					for( var i=0; i<response.psced_count.length; i++ ){
-						psced_names[i] = psced[i]['name'];
-						psced_count[i] = psced[i]['count'];
-					}
-					noOfClassifications = new Chart(document.getElementById('noOfClassifications').getContext('2d'), {
-					    type: 'horizontalBar',
-					    data: {
-					      labels: psced_names,
-					      datasets: [{
-					        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850",
-					        	"#a88132","#92a832","#34a832","#32a88c","#327da8",
-					        	"#3a32a8","#7b32a8","#a8327f","#e3e08f","#8fe3bd",
-					        	"#fc8c03","#8cfffb","#b48cff","#8584a1","#1f4d3e"],
-					        data: psced_count
-					      }]
-					    },
-					    options: {
-					      title: {
-					        display: true,
-					        text: 'Number of Classifications'
-					      },
-					      legend: {
-			    		    display: false
-			    		  }
-					    }
-					});
-
-			//------------------------------------Records Per Year-------------------------------------
-					var recordsYear = [];
-					var recordsCount = [];
-					for(var i=0; i<response.records_per_year_count.length; i++){
-						recordsYear[i] = response.records_per_year_count[i]['year'];
-						recordsCount[i] = response.records_per_year_count[i]['count'];
-					}
-					recordsPerYear = new Chart(document.getElementById("recordsPerYear"), {
-					  type: 'line',
-					  data: {
-					    labels: recordsYear,
-					    datasets: [{
-					        data: recordsCount,
-					        label: "Records",
-					        borderColor: "#3e95cd",
-					        fill: false
-					      }
-					    ]
-					  },
-					  options: {
-					    title: {
-					      display: true,
-					      text: 'Records per Year'
-					    },
-					    legend: {
-					      display: false
-					    }
-					  }
-					})
-			//--------------------------------Classification per year--------------------------------------
-					pscedYear = [];
-					pscedCount = [];
-					for(var i=0; i<response.psced_per_year_count.length;i++){
-						pscedYear[i] = response.psced_per_year_count[i]['year'];
-						pscedCount[i] = response.psced_per_year_count[i]['psced_count'];
-					}
-					classificationPerYear = new Chart(document.getElementById("classificationPerYear"), {
-					    type: 'bar',
-					    data: {
-					      labels: pscedYear,
-					      datasets: [
-					        {
-					          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-					          data: pscedCount
-					        }
-					      ]
-					    },
-					    options: {
-					      legend: { display: false },
-					      title: {
-					        display: true,
-					        text: 'Number of Classifications Per Year'
-					      }
-					    }
-					});
-			    },
-			    "error": function(data){
-			    	alert("error");
-			    }
-			});
-
-		}
-		initGraphs();
-		//-------------------------refresh graph----------------------------------------
-		$("#btn-graph-refresh").on("click", function(){
-			initGraphs();
-		});
 
 //--------------------------adjust datatables header--------------------------------
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
@@ -523,57 +383,7 @@
 					</div>
 				</section>
 			</div>
-			<div class="tab-pane fade" id="nav-home-graphs" role="tabpanel">
-				<div class="main-header base-bg-primary"></div>
-				<section id="home-graphs" class="main-content">
-					<div class="row">
-						<div class="col-6">
-							<h1>GRAPHS</h1>
-						</div>
-						<div class="col-6 d-flex justify-content-end">
-							<div>
-								<a id="btn-graph-refresh" class="btn btn-secondary base-btn base-bg-primary"><i class="fa fa-sync fa-md"></i></a>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<!-- Nav pills -->
-						<div class="col-sm-12 col-lg-3">
-							<ul class="nav flex-column nav-pills">
-								<li class="nav-item">
-									<a class="nav-link active" data-toggle="pill" href="#home">Applied vs Basic</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" data-toggle="pill" href="#menu1">Records per Year</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" data-toggle="pill" href="#menu2">Classifications per Year</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" data-toggle="pill" href="#menu3">No. of Classifications</a>
-								</li>
-							</ul>
-						</div>
-						<!-- Tab panes -->
-						<div style="overflow-x:auto" class="col-sm-12 col-lg-9">
-							<div class="tab-content">
-								<div class="tab-pane container active animate__animated animate__fadeIn animate__faster" id="home">
-									<canvas id="appliedVsBasic"></canvas>
-								</div>
-								<div class="tab-pane container animate__animated animate__fadeIn animate__faster" id="menu1">
-									<canvas id="recordsPerYear"></canvas>
-								</div>
-								<div class="tab-pane container animate__animated animate__fadeIn animate__faster" id="menu2">
-									<canvas id="classificationPerYear"></canvas>
-								</div>
-								<div style="min-width:700px" class="tab-pane container animate__animated animate__fadeIn animate__faster" id="menu3">
-									<canvas id="noOfClassifications"></canvas>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-			</div>
+
 			<div class="tab-pane fade" id="nav-home-accounts" role="tabpanel">
 				<div class="main-header base-bg-primary"></div>
 				<section id="home-accounts" class="main-content">
@@ -606,8 +416,9 @@
 										<th></th>
 										<th>ID</th>
 										<th>USERNAME</th>
-										<th>NAME</th>
+										<th>NAME(Last, First, Middle)</th>
 										<th>ROLE</th>
+										<th>REQUESTS</th>
 									</tr>
 								</thead>
 								<tbody>

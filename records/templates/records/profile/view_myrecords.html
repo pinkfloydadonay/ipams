@@ -139,6 +139,7 @@
 			                doc_comments+='<div class="card" style="background-color:#dbdbdb; margin-bottom:10px;"><div class="card-body"><p class="card-text">'+response["comments"][i]+'</p><h6 class="card-subtitle mb-2 text-muted">'+response["checked_dates"][i]+'</h6><h6 class="card-subtitle mb-2 text-muted">'+response["checked_bys"][i]+'</h6></div></div>';
 			            }
 				        $("#doc-title").html(""+response["doc-title"]);
+                        $("#doc-status").html(""+response["doc-status"]);
 				        $("#doc-link").html('<a href="/download/document/'+response['record-upload-id']+'">Download document</a>');
 				        $("#doc-comments").html(doc_comments);
 				        $("#doc-comments").append('<textarea class="form-control" id="write-comment" rows="3" placeholder="Write a comment..." style="margin-top:15px;"></textarea>');
@@ -241,11 +242,17 @@
     </div>
     <div class="row">
         <div class="col-12 d-flex justify-content-end" style="margin-bottom:20px;">
-            <a {% if research_record.proposal is not none %} href="{% url 'records-myrecords-view' record_id=research_record.proposal.pk %}" {% endif %}>Proposal</a>&nbsp;|&nbsp;
-            {% if research_record.research is not none %}
-                <a href="{% url 'records-myrecords-view' record_id=research_record.research.pk %}">Research</a>
+            {% if research_record %}
+                <a {% if research_record.proposal is not none %} href="{% url 'records-myrecords-view' record_id=research_record.proposal.pk %}" {% endif %}>Proposal</a>&nbsp;|&nbsp;
+                {% if research_record.research is not none %}
+                    <a href="{% url 'records-myrecords-view' record_id=research_record.research.pk %}">Research</a>
+                {% else %}
+                    <a href="{% url 'records-add-research' research_record_id=research_record.pk %}">New Record(Research)</a>
+                {% endif %}
+            {% elif record.record_type.name == 'Project' %}
+                Project
             {% else %}
-                <a href="{% url 'records-add-research' research_record_id=research_record.pk %}">New Record(Research)</a>
+                This record is not yet classified
             {% endif %}
         </div>
     </div>

@@ -6,7 +6,7 @@ from django.views import View
 from django.shortcuts import redirect
 from . import forms
 from .decorators import authorized_roles
-from .models import User, UserRole
+from .models import User, UserRole, RoleRequest
 from django.db.models import Q
 
 
@@ -55,6 +55,7 @@ class SignupView(View):
                 user.set_password(password)
                 user.role = UserRole.objects.get(pk=1)
                 user.save()
+                RoleRequest(user=user, role=UserRole.objects.get(pk=int(request.POST.get('role', 0)))).save()
                 login(request, user)
                 return redirect('/')
             error_message = 'Password did not match!'
@@ -104,12 +105,17 @@ def get_all_accounts(request):
             accounts = User.objects.all()
         data = []
         for account in accounts:
+            role = ''
+            role_request = RoleRequest.objects.filter(user=account).first()
+            if role_request:
+                role = f'<a>{role_request.role.name}</a>'
             data.append([
                 '',
                 account.pk,
                 str(account.username),
-                str(account.first_name)+' '+str(account.last_name),
+                f'{account.last_name}, {account.first_name} {account.last_name}',
                 account.role.name,
+                role,
             ])
         return JsonResponse({'data': data})
 

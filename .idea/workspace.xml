@@ -24,6 +24,32 @@
   <component name="ChangeListManager">
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ipams/templates/ipams/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/ipams/templates/ipams/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/123.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/Neils_Resume.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/abstract/q1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123_1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123_1_pSw0IjZ.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123_2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123_D1Ptapq.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/123_Vt2Y7OK.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base_LKx9LX9.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base_fdnWONy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base_hYRzBum.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base_qeti00u.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/base_tHvx2TZ.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/ipams-wireframes-v5.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/notes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/q1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/q1_HdBp3zv.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/q1_qKWQvQ8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/test" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/test2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/documents/test_P5eDY0h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/records/templates/records/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

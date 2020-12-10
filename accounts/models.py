@@ -51,6 +51,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 	REQUIRED_FIELDS = ['email']
 
 
+class Course(models.Model):
+	name = models.CharField(max_length=30, unique=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+
+
+class Student(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, default=None)
+	course = models.ForeignKey(Course, on_delete=models.DO_NOTHING, null=True, blank=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+
+
 class RoleRequest(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	role = models.ForeignKey(UserRole, on_delete=models.CASCADE)

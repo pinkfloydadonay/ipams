@@ -300,10 +300,11 @@
                                             <div class="col-6">
 
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-12">
                                                 <div class="row">
-                                                    <div class="col-12">
-                                                        <a href="#" id="edit-profile">Edit profile</a>
+                                                    <div class="col-12 d-flex justify-content-end">
+                                                        <a href="#" id="edit-profile" style="margin-right:10px;">Edit profile</a>
+                                                        <a href="#" id="change-password">Change Password</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -413,6 +414,9 @@
             $("#profile-btn-footer").show();
             $("#full_name").hide()
             $("#multi-name-row").show();
+        });
+        $("#change-password").on("click", function(){
+            alert("not yet implemented");
         });
         $("#btn-profile-cancel").on("click",function(){
             $(".profile-input.editable").attr("readonly", "true");

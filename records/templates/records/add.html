@@ -186,6 +186,14 @@
    		$("#record-type-section-3").hide();
     });
 
+    $(".termsRadio").click(function(){
+    	var termsAnswer = $("input[name=termsRadio]:checked").val();
+    	if(termsAnswer == "1")
+    		$("#btn-record-submit").show();
+    	else
+    		$("#btn-record-submit").hide();
+    });
+
 </script>
 
 {% endblock %}
@@ -271,12 +279,29 @@
 									</button>
 								</div>
 								<div class="modal-body">
-									<label>Owners:</label> <input placeholder="search username" type="text" class="form-control" id="owners-id" name="owners-id">
-									<label>Adviser to be submitted to:</label> <input placeholder="search username" id="adviser-id" name="adviser-id" type="text" class="form-control">
+									<p>
+										By accomplishing this form, I agree that the information submitted shall be used solely for purposes of monitoring and planning. CIT-U may likewise disclose my personal information to the extent that CIT-U will be required to do so by the Data Privacy Act of 2012. As a general rule, CIT-U may only keep my information until such time that it has attained the purpose by which it collects them. Under the foregoing circumstances and to the extent permissible by applicable law, I agree not to take any action against CIT-U for the disclosure and retention of my information. I am aware that pursuant to its duties and obligations under the Data Privacy Act of 2012, CIT-U will protect and treat all my personal and sensitive information that it collects, records, processes, and stores in connection to the submission as confidential. Further, I am fully aware that CIT-U may disclose such information to concerned authorities and institutions to comply with the requirements of public order and safety. In this regard, by clicking the "I ACCEPT" button below, I hereby allow CIT-U to collect, process, use, share and retain my personal information.
+									</p>
+									<div class="form-check-inline">
+									  <input class="form-check-input termsRadio" type="radio" name="termsRadio" id="termsRadio1" value="1">
+									  <label class="form-check-label termsLabel" for="termsRadio1">
+										  I ACCEPT
+									  </label>
+									</div>
+									<div class="form-check-inline">
+										<input class="form-check-input termsRadio" type="radio" name="termsRadio" id="termsRadio2" value="2" checked>
+										<label class="form-check-label termsLabel" for="termsRadio2">
+											I DO NOT ACCEPT
+										</label>
+									</div><br>
+									<div id="owners-advisers">
+										<label>Owners:</label> <input placeholder="search username" type="text" class="form-control" id="owners-id" name="owners-id">
+										<label>Adviser to submit this record to:</label> <input placeholder="search username" id="adviser-id" name="adviser-id" type="text" class="form-control">
+									</div>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									<button type="button" id="btn-record-submit" class="btn base-btn base-bg-primary">Submit</button>
+									<button type="button" id="btn-record-submit" class="btn base-btn base-bg-primary" style="display:None;">Submit</button>
 								</div>
 							</form>
 						</div>

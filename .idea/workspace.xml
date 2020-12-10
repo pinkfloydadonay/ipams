@@ -24,37 +24,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c9113322-820c-471e-9518-9aaf101f9d70" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_auto_20201116_0557.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/migrations/0003_init_accounts.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/templates/accounts/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/templates/accounts/signup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/documents/test_JRep73W" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0002_init_records.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0003_auto_20201116_1526.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/migrations/0004_remove_checkedupload_status.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/authors_and_categories.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/authors_and_categories.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/budget.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/budget.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/collaboration.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/add_record/conference.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/add_record/conference.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/edit.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/edit_record/publication.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/edit_record/publication.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/home_navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/home_navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/profile/view_myrecords.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/templates/records/view_record/uploads_title.html" beforeDir="false" afterPath="$PROJECT_DIR$/records/templates/records/view_record/uploads_title.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/records/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/records/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

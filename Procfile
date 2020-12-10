@@ -1,1 +1,1 @@
-web: gunicorn ipamstbi.wsgi
+web: gunicorn ipams.wsgi

@@ -114,14 +114,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+# STATIC_URL = '/static/'
+# MEDIA_URL = '/media/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'staticfiles'),
+# ]
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+#111
+STATIC_TMP = '/static'
+#STATIC_ROOT = 'staticfiles'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles'),
-]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+
+#MEDIA_URL = '/images/'
+MEDIA_URL = '/media/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+#111
 
 LOGIN_REDIRECT_URL = '/'
 
